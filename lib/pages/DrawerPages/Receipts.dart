@@ -22,7 +22,6 @@ class _ReceiptsState extends State<Receipts> {
   @override
   void dispose(){
     _searchController.dispose();
-    
     super.dispose();
   }
 
@@ -90,7 +89,7 @@ class _ReceiptsState extends State<Receipts> {
         FocusScope.of(context).unfocus();
       },
       appBar: AppBar(
-        backgroundColor: primaryBlue.shade900,
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
         title: Text('Receipts', style: bodyMregular.copyWith(color: Colors.white)),
       ),
       drawer: AppDrawer(selectedIndex: _selectedIndex, onTap: _onItemTapped),

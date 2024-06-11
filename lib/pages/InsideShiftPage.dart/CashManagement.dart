@@ -8,8 +8,10 @@ import 'package:pos_system/const/constant.dart';
 import 'package:pos_system/const/textStyle.dart';
 
 class CashManagement extends StatefulWidget {
-  const CashManagement({super.key});
+  final Function(double, double) onRecordsUpdated;
+  const CashManagement({Key?key, required this.onRecordsUpdated}): super(key: key);
 
+ 
   @override
   State<CashManagement> createState() => _CashManagementState();
 }
@@ -22,19 +24,49 @@ class _CashManagementState extends State<CashManagement> {
       symbol: 'RM',
       decimalDigits: 2,
     );
+  
+  // List to hold records
+  List<CashInOutRecord> records = [];
+
   @override
   void dispose() {
-    _amountController.text = CurrencyTextInputFormatter.currency(
-      symbol: 'RM',
-      decimalDigits: 2,
-    ).formatDouble(0.00);
+    _amountController.dispose();
     _commentController.dispose();
     super.dispose();
   }
 
+  void _addRecord(String type){
+    setState(() {
+      double amount = double.parse(_amountController.text.replaceAll('RM','').replaceAll(',', ''));
+      records.add(CashInOutRecord(
+        time: TimeOfDay.now().format(context),
+        owner: 'Owner',
+        comment: _commentController.text,
+        amount: amount,
+        type: type,
+      ));
+      _amountController.clear();
+      _commentController.clear();
+      isFilled = false;
+    });
+    // Pass updated records to Shift page
+    double totalPayIn = records
+        .where((record) => record.type == 'PAY IN')
+        .map((record) => record.amount)
+        .fold(0, (sum, amount) => sum + amount);
+    double totalPayOut = records
+        .where((record) => record.type == 'PAY OUT')
+        .map((record) => record.amount)
+        .fold(0, (sum, amount) => sum + amount);
+    widget.onRecordsUpdated(totalPayIn, totalPayOut);
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Cash management', style: bodyMregular.copyWith(color: Colors.white),),
         backgroundColor: Theme.of(context).colorScheme.tertiary,
@@ -54,6 +86,7 @@ class _CashManagementState extends State<CashManagement> {
               //initialValue: _formatter.formatDouble(0.00),
               inputFormatters: <TextInputFormatter>[
                 _formatter,
+                LengthLimitingTextInputFormatter(12),
               ],
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
@@ -64,10 +97,13 @@ class _CashManagementState extends State<CashManagement> {
             const SizedBox(height: 30),
             TextField(
               controller: _commentController,
+              maxLines: 1,
+              maxLength: 25,
               decoration: InputDecoration(
                 labelText: 'Comment',
+                counterText: '',
                 labelStyle: heading4Regular,
-                contentPadding: EdgeInsets.symmetric(vertical: 5.0),
+                contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
               ),
             ),
             const SizedBox(height: 20),
@@ -75,7 +111,7 @@ class _CashManagementState extends State<CashManagement> {
               children: [
                 Expanded(
                   child: isFilled? BlueOutlineButton(
-                    onPressed: (){}, 
+                    onPressed: () => _addRecord('PAY IN'),
                     text: 'PAY IN'
                   ): CustomOutlineButton(
                     onPressed: (){}, 
@@ -91,7 +127,7 @@ class _CashManagementState extends State<CashManagement> {
               children: [
                 Expanded(
                   child: CustomOutlineButton(
-                    onPressed: isFilled? (){}: (){}, 
+                    onPressed: isFilled? ()=> _addRecord('PAY OUT'): (){}, 
                     text: 'PAY OUT', 
                     borderColor: isFilled? Colors.red: Colors.grey, 
                     textColor: isFilled? Colors.red: Colors.grey,
@@ -104,20 +140,46 @@ class _CashManagementState extends State<CashManagement> {
             const SizedBox(height:10),
             Text('Pay in/Pay out', style: bodyXSregular.copyWith(color: primaryBlue.shade900),),
             const SizedBox(height: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('${TimeOfDay.now().format(context)}', style: bodySregular),
-                //const SizedBox(width: 10),
-                Text('Owner - ${_commentController.text}', style: bodySregular),
-                const SizedBox(width: 50),
-                Text('${_amountController.text}', style: bodySregular, textAlign: TextAlign.end,),
-              ],
-            )
+            ...records.reversed.map((record){
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(record.time, style: bodySregular),
+                        const SizedBox(width: 10),
+                        Text('Owner ${record.comment.isNotEmpty? '- ${record.comment}': ''}', style: bodySregular),
+                      ],
+                    ),
+                    Text('${record.type == 'PAY OUT'? '-' : ''}RM${record.amount.toStringAsFixed(2)}',
+                      style:bodySregular, textAlign: TextAlign.end),
+                  ],
+                ),
+                );
+            }),
 
           ],
         ),
       ),
     );
   }
+}
+
+class CashInOutRecord{
+  final String time;
+  final String owner;
+  final String comment;
+  final double amount;
+  final String type;
+
+  CashInOutRecord({
+    required this.time,
+    required this.owner,
+    required this.comment,
+    required this.amount,
+    required this.type,
+  });
 }
