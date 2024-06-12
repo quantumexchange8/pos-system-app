@@ -1,11 +1,9 @@
 import 'dart:io';
 
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
-import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pos_system/const/constant.dart';
 import 'package:pos_system/const/textStyle.dart';
@@ -16,14 +14,14 @@ import 'package:shape_of_view_null_safe/shape_of_view_null_safe.dart';
 enum soldBy {Each, Weight}
 enum design {Color_and_shape, Image}
 
-class CreateItem extends StatefulWidget {
-  const CreateItem({super.key});
+class EditItem extends StatefulWidget {
+  const EditItem({super.key});
 
   @override
-  State<CreateItem> createState() => _CreateItemState();
+  State<EditItem> createState() => _EditItemState();
 }
 
-class _CreateItemState extends State<CreateItem> {
+class _EditItemState extends State<EditItem> {
   TextEditingController nameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController costController = TextEditingController(text: 'RM0.00');
@@ -76,7 +74,7 @@ class _CreateItemState extends State<CreateItem> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.tertiary,
-        title: Text('Create item', style: heading3Regular.copyWith(color: Colors.white)),
+        title: Text('Edit item', style: heading3Regular.copyWith(color: Colors.white)),
         actions: [
           TextButton(
             onPressed: (){
@@ -333,7 +331,7 @@ class _CreateItemState extends State<CreateItem> {
 
                     //need to save and display the design, havent done
                     if(_design == design.Color_and_shape) ...[
-                      _buildColorSelection(),
+                      _buildColorAndShapeSelection(),
                       _buildShapeSelection(),
                     ]else if (_design == design.Image)...[
                       _buildImageSelection(),
@@ -344,8 +342,66 @@ class _CreateItemState extends State<CreateItem> {
               ),
             ),
 
-            
+//part 4 (button)
+            const SizedBox(height: 15),
+            Container(
+              height: 40,
+              color: Colors.grey.shade200,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Center(
+                  child: Expanded(
+                    child: FilledButton.icon(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
+                        iconColor: MaterialStateColor.resolveWith((states) => Theme.of(context).colorScheme.secondary),
+                        
+                      ),
+                      onPressed: (){
+                       showDialog(
+                        context: context, 
+                        builder: (context)=> AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          backgroundColor: Theme.of(context).colorScheme.background,
+                          title: Text('Delete item', style: heading3Bold),
+                          content: Text('Are you sure you want to delete the item?',style: bodySregular.copyWith(color: Theme.of(context).colorScheme.secondary),),
+      
+                          actions: [
+                            TextButton(
+                              onPressed: (){
+                                Navigator.pop(context);
+                              },
+                               
+                              child: Text('CANCEL'),
+                            ),
+                            TextButton(
+                              onPressed: (){
 
+                                //delete Item function
+
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context)=> SubItems(),
+                                  ),
+                                );
+                              }, 
+                              child: const Text('DELETE'),
+                            ),
+                          ],
+                        )
+                      );
+                      }, 
+                      icon: Icon(Icons.delete), 
+                      label: Text('DELETE ITEM', style: bodySregular.copyWith(color: Theme.of(context).colorScheme.secondary),),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
           ],
         ),
         
@@ -354,7 +410,7 @@ class _CreateItemState extends State<CreateItem> {
   }
 
   //Widget for choosing color and shape
-  Widget _buildColorSelection(){
+  Widget _buildColorAndShapeSelection(){
     List<Color>colors = [
       Colors.grey.shade400,
       Colors.red,
@@ -517,4 +573,3 @@ Shape _getShape(String shapeName) {
     );
   }
 }
-  

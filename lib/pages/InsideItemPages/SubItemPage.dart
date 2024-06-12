@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateItem.dart';
+import 'package:pos_system/pages/InsideItemPages/Edit_Item.dart';
 import 'package:pos_system/widgets/customDropDownMenu.dart';
 
 class SubItems extends StatefulWidget {

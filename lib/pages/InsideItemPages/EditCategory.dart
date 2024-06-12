@@ -6,24 +6,23 @@ import 'package:pos_system/pages/InsideItemPages/AssignItem.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateItem.dart';
 import 'package:pos_system/pages/InsideItemPages/SubCategoriesPage.dart';
 
-class CreateCategory extends StatefulWidget {
-  const CreateCategory({super.key});
+class EditCategory extends StatefulWidget {
+  const EditCategory({super.key});
 
   @override
-  State<CreateCategory> createState() => _CreateCategoryState();
+  State<EditCategory> createState() => _EditCategoryState();
 }
 
-class _CreateCategoryState extends State<CreateCategory> {
-  TextEditingController CtgyNameController = TextEditingController();
+class _EditCategoryState extends State<EditCategory> {
+ TextEditingController CtgyNameController = TextEditingController();
   Color _selectedColor = Colors.grey.shade400;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.tertiary,
-        title: Text('Create category', style: heading3Regular.copyWith(color: Colors.white)),
+        title: Text('Edit category', style: heading3Regular.copyWith(color: Colors.white)),
         actions: [
           TextButton(
             onPressed: (){
@@ -113,7 +112,64 @@ class _CreateCategoryState extends State<CreateCategory> {
               ),
             ),
           ),
-          
+          const SizedBox(height: 15),
+           Container(
+            height: 40,
+            color: Colors.grey.shade200,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Center(
+                child: Expanded(
+                  child: FilledButton.icon(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
+                      iconColor: MaterialStateColor.resolveWith((states) => Theme.of(context).colorScheme.secondary),
+                      
+                    ),
+                    onPressed: (){
+                      showDialog(
+                      context: context, 
+                      builder: (context)=> AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
+                        ),
+                        backgroundColor: Theme.of(context).colorScheme.background,
+                        title: Text('Delete category', style: heading3Bold),
+                        content: Text('Are you sure you want to delete the category?',style: bodySregular.copyWith(color: Theme.of(context).colorScheme.secondary),),
+            
+                        actions: [
+                          TextButton(
+                            onPressed: (){
+                              Navigator.pop(context);
+                            },
+                              
+                            child: Text('CANCEL'),
+                          ),
+                          TextButton(
+                            onPressed: (){
+      
+                              //delete Item function
+      
+                              Navigator.push(
+                                context, 
+                                MaterialPageRoute(
+                                  builder: (context)=> SubCategories(),
+                                ),
+                              );
+                            }, 
+                            child: const Text('DELETE'),
+                          ),
+                        ],
+                      )
+                    );
+                    }, 
+                    icon: Icon(Icons.delete), 
+                    label: Text('DELETE CATEGORY', style: bodySregular.copyWith(color: Theme.of(context).colorScheme.secondary),),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
 

@@ -71,31 +71,29 @@ class _SubDiscountsState extends State<SubDiscounts> {
 
       body: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 150, width: 150,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey.shade300,
-              ),
-              child: Icon(Icons.sell_outlined, size: 100),
-            ),
-            const SizedBox(height: 25),
-            Text('You have no discounts yet', style: heading4Regular),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Create discounts that can be applied at the time of sale.', style: bodySregular),
-                TextButton(
-                  onPressed: (){}, 
-                  child: Text('Learn more', style: bodySregular.copyWith(decoration: TextDecoration.underline),),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: 150, width: 150,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey.shade300,
                 ),
-              ],
-            ),
-
-          ],
+                child: Icon(Icons.sell_outlined, size: 100),
+              ),
+              const SizedBox(height: 25),
+              Text('You have no discounts yet', style: heading4Regular),
+              const SizedBox(height: 25),
+              Text('Create discounts that can be applied at the time of sale.', style: bodySregular),
+              TextButton(
+                onPressed: (){}, 
+                child: Text('Learn more', style: bodySregular.copyWith(decoration: TextDecoration.underline),),
+              ),
+          
+            ],
+          ),
         ),
       ),
     );
