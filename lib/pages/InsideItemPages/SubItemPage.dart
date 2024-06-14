@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateItem.dart';
-import 'package:pos_system/pages/InsideItemPages/Edit_Item.dart';
 import 'package:pos_system/widgets/customDropDownMenu.dart';
+import 'package:pos_system/widgets/itemDataModel.dart';
+import 'package:shape_of_view_null_safe/shape_of_view_null_safe.dart';
 
 class SubItems extends StatefulWidget {
   const SubItems({super.key});
@@ -14,21 +16,24 @@ class SubItems extends StatefulWidget {
 
 class _SubItemsState extends State<SubItems> {
   bool isSearching = false;
+  List<Item> items = [];
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: isSearching?
-        IconButton(
+          IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
               setState(() {
                 isSearching = false;
               });
             },
-          )
-        : null,
+          ): null,
+          
         backgroundColor: Theme.of(context).colorScheme.tertiary,
         title: isSearching? TextField(
           autofocus: true,
@@ -66,17 +71,28 @@ class _SubItemsState extends State<SubItems> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(40),
           ),
-          onPressed: (){
-            Navigator.push(
+          onPressed: () async {
+            final newItem = await Navigator.push(
               context, 
               MaterialPageRoute(builder: (context)=> CreateItem(),
               ),
             );
+
+            if(newItem != null){
+              setState(() {
+                items.add(newItem);
+              });
+            }
           },    
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
-      body: Padding(
+      body: items.isEmpty? _buildDefaultView(): _buildItemsList(),
+    );
+  }
+  
+  Widget _buildDefaultView(){
+    return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -101,13 +117,106 @@ class _SubItemsState extends State<SubItems> {
                 ),
               ],
             ),
-        
-           
-           
             
           ],
         ),
-      ),
+      );
+  }
+
+  Widget _buildItemsList(){
+    //List<String> shapes = ['square', 'circle', 'polygon', 'star'];
+    /* List<Shape>shape = [
+    RoundRectShape(borderRadius: BorderRadius.circular(0)),
+    CircleShape(),
+    PolygonShape(numberOfSides: 8),
+    StarShape(noOfPoints: 5),
+    ];  */
+
+    return ListView.builder(
+      itemCount: items.length,
+      itemBuilder: (context, index){
+      final item = items[index];
+      
+      //Shape shape;
+      //method to make user choose the shape 
+
+        return ListTile(
+          //leading: 
+          title: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      if(item.imagePath!=null)
+                        Image.file(
+                          File(item.imagePath!),
+                          width: 30,
+                          height: 30,
+                          fit: BoxFit.cover,
+                        )
+                        else
+                          ShapeOfView(
+                            shape: item.shape,
+                            child: Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                              color: _convertColor(item.color),
+                              ),
+                            ),
+                          ),
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.name, style: bodySregular),
+                          Text((item.stock.isEmpty||item.stock =='0')? '-': '${item.stock} in stock', style: bodyXSregular),
+                        ],
+                      ),
+                    ],
+                  ),
+                  
+                  Text(item.price.isNotEmpty? item.price: 'Variable',style: bodySregular),
+                ],
+              ),
+              Divider(
+                height: 30,
+                color: Colors.grey.shade300, 
+                thickness: 1, 
+                indent: 40, 
+                endIndent: 0,
+              ),
+            ],
+          ),
+          
+          onTap: (){
+            //handle edit method
+          },
+          
+
+        );
+      }
     );
   }
+
+ Color _convertColor(String colorString) {
+  // Remove 'Color(' prefix and ')' suffix
+  if (colorString.startsWith('Color(')) {
+    colorString = colorString.substring(6, colorString.length - 1);
+  }
+
+  // Ensure the string starts with '0xff'
+  if (!colorString.startsWith('0xff')) {
+    colorString = '0xff' + colorString;
+  }
+
+  return Color(int.parse(colorString));
+}
+
+
+
+
+
 }

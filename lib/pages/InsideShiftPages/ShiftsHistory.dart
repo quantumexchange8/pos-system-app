@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pos_system/const/textStyle.dart';
-import 'package:pos_system/pages/InsideShiftPage.dart/ShiftReport.dart';
+import 'package:pos_system/pages/InsideShiftPages/ShiftReport.dart';
 
 class ShiftsHistory extends StatefulWidget {
   const ShiftsHistory({super.key});

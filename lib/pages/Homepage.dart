@@ -7,6 +7,9 @@ import 'package:pos_system/pages/DrawerPages/Items.dart';
 import 'package:pos_system/pages/DrawerPages/Receipts.dart';
 import 'package:pos_system/pages/DrawerPages/Settings.dart';
 import 'package:pos_system/pages/DrawerPages/Shift.dart';
+import 'package:pos_system/pages/DrawerPages/apps.dart';
+import 'package:pos_system/pages/DrawerPages/backOffice.dart';
+import 'package:pos_system/pages/DrawerPages/support.dart';
 import 'package:pos_system/widgets/appDrawer.dart';
 
 
@@ -67,11 +70,26 @@ class _HomePageState extends State<HomePage> {
            Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const Settings(),
+              builder: (context) => const BackOffice(),
             ),
           );
           break;
-        // Add more cases if needed
+        case 6:
+           Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Apps(),
+            ),
+          );
+          break;
+        case 7:
+           Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Support(),
+            ),
+          );
+          break;
       }
     }
   }
@@ -161,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.white, // Default color
                     selectedColor: Colors.white, // Color when selected
                     fillColor: Colors.transparent, // Background color when selected
-                   
+                    borderRadius: BorderRadius.circular(5),
                     borderWidth: 2,
                     children: [
                       Container(
@@ -198,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                   height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
-                    color: Colors.grey.shade200,
+                    color: Theme.of(context).colorScheme.background,
                     border: isSearching?
                     Border(
                       top: BorderSide(color: Colors.grey.shade400, width: 1),
@@ -231,6 +249,7 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.all(15.0),
                     child: DropdownButton<String>(
                         value: dropdownValue,
+                        
                         items: <String>["All items", "Discounts"]
                         .map<DropdownMenuItem<String>>((String value){
                           return DropdownMenuItem<String>(
@@ -252,7 +271,7 @@ class _HomePageState extends State<HomePage> {
                 child: Container(
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
+                    color: Theme.of(context).colorScheme.background,
                     shape: BoxShape.rectangle,
                     border: isSearching? 
                     Border(
@@ -285,7 +304,7 @@ class _HomePageState extends State<HomePage> {
 
           Expanded(
             child: Container(
-              color: Colors.grey.shade100,
+              color: Theme.of(context).colorScheme.background,
               child: _buildContent(),
             ),
             
@@ -305,6 +324,7 @@ class _HomePageState extends State<HomePage> {
           Icon(icon, color: Theme.of(context).colorScheme.secondary),
           const SizedBox(width: 15),
           Text(title),
+          //need to action 
         ],
       )
     );

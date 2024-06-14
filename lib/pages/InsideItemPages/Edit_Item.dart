@@ -102,6 +102,10 @@ class _EditItemState extends State<EditItem> {
           children: [
             Container(
               color: Colors.grey.shade200,
+              height: 15,
+            ),
+            Container(
+              //color: Colors.grey.shade200,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -121,7 +125,7 @@ class _EditItemState extends State<EditItem> {
               
                     DropdownButtonFormField<String>(
                       value: _selectedCategory,
-                      style: TextStyle(color: Colors.grey.shade700),
+                      style: bodySregular.copyWith(color: Theme.of(context).colorScheme.secondary),
                       items: ['No category', 'Create category'].map((String category){
                         return DropdownMenuItem<String>(
                           value: category,
@@ -233,11 +237,14 @@ class _EditItemState extends State<EditItem> {
                 ),
               ),
             ),
-            const SizedBox(height: 15),
+            Container(
+              color: Colors.grey.shade200,
+              height: 15,
+            ),
 
 //part 2 
             Container(
-              color: Colors.grey.shade200,
+              //color: Colors.grey.shade200,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -293,9 +300,12 @@ class _EditItemState extends State<EditItem> {
               ),
             ),
 //part 3
-            const SizedBox(height: 15),
             Container(
               color: Colors.grey.shade200,
+              height: 15,
+            ),
+            Container(
+              //color: Colors.grey.shade200,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -343,10 +353,13 @@ class _EditItemState extends State<EditItem> {
             ),
 
 //part 4 (button)
-            const SizedBox(height: 15),
+            Container(
+              color: Colors.grey.shade200,
+              height: 15,
+            ),
             Container(
               height: 40,
-              color: Colors.grey.shade200,
+              //color: Colors.grey.shade200,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Center(
@@ -516,11 +529,11 @@ class _EditItemState extends State<EditItem> {
                 child: Container(
                   width: 70,
                   height: 70,
-                  color: Theme.of(context).colorScheme.background, // Example color
+                  color: Theme.of(context).colorScheme.secondary, // Example color
                   alignment: Alignment.center,
                   //child: Text(shape.toUpperCase(), style: TextStyle(color: Colors.black)),
                   child: _selectedShape == shapes[index]?
-                  Icon(Icons.check, color: Theme.of(context).colorScheme.secondary,size: 35):null,
+                  Icon(Icons.check, color: Theme.of(context).colorScheme.background,size: 35):null,
                 ),
               ), 
               

@@ -1,7 +1,9 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:pos_system/const/textStyle.dart';
+import 'package:pos_system/widgets/discountDataModel.dart';
 
 enum Discounts{percentage, sigma}
 
@@ -20,11 +22,11 @@ class CreateDiscounts extends StatefulWidget {
 class _CreateDiscountsState extends State<CreateDiscounts> {
   TextEditingController discountNameController = TextEditingController();
   TextEditingController valueController = TextEditingController();
-  final CurrencyTextInputFormatter _formatter = CurrencyTextInputFormatter.currency(
-      symbol: '',
-      decimalDigits: 2,
-  );
+  bool _validateName = false;
   List<bool>isSelected = [false,false];
+  Discounts? selectedDiscount;
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +38,19 @@ class _CreateDiscountsState extends State<CreateDiscounts> {
           TextButton(
             onPressed: (){
               //need to handle save function, havent done
+              setState(() {
+                _validateName = discountNameController.text.isEmpty;
+              });
+
+              if(!_validateName){
+                DiscountData newDiscount = DiscountData(
+                  discount: selectedDiscount == Discounts.percentage
+                      ? '${valueController.text}%'
+                      : valueController.text,
+                  name: discountNameController.text,
+                );
+                Navigator.pop(context, newDiscount);
+              }
             
             }, 
             child: Text('SAVE', style: bodySregular.copyWith(color: Colors.white)),
@@ -45,10 +60,11 @@ class _CreateDiscountsState extends State<CreateDiscounts> {
 
       body: Column(
         children: [
+          
           Container(
-            color: Colors.grey.shade200,
+            //color: Colors.grey.shade200,
             child: Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 children: [
                   TextField(
@@ -57,40 +73,78 @@ class _CreateDiscountsState extends State<CreateDiscounts> {
                       labelText: 'Name',
                       labelStyle: heading4Regular,
                       contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
-                      //errorText: _validateName? 'This field cannot be blank' : null,
+                      errorText: _validateName? 'This field cannot be blank' : null,
                     ),
                   ),
 
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   Row(
                     children: [
-                      TextFormField(
-                        controller: valueController,
-                        inputFormatters: <TextInputFormatter>[
-                          _formatter,
-                          LengthLimitingTextInputFormatter(6),
-                        ],
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: 'Price',
-                          labelStyle: heading4Regular,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
-                          helperText: 'Leave the field blank to indicate the value upon sale',
-                          helperStyle: bodyXSregular.copyWith(color: Colors.grey.shade700),
-                          //errorText: _validateName? 'This field cannot be blank' : null,
+                      Expanded(
+                        child: TextFormField(
+                          controller: valueController,
+                          inputFormatters: [
+                            if(selectedDiscount == Discounts.percentage)
+                             CurrencyTextInputFormatter.currency(
+                                symbol: '',
+                                decimalDigits: 2,
+                              ),
+                               
+                            if(selectedDiscount == Discounts.sigma)
+                              CurrencyTextInputFormatter.currency(
+                                symbol: 'RM',
+                                decimalDigits: 2,
+                              ),
+                               LengthLimitingTextInputFormatter(
+                                selectedDiscount == Discounts.percentage? 6:12),
+                                
+                          ],
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'Value',
+                            labelStyle: heading4Regular,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
+                            //suffixText: selectedDiscount == Discounts.percentage ? '%' : '',
+                            helperText: 'Leave the field blank to indicate the value upon sale',
+                            helperStyle: bodyXSregular.copyWith(color: Colors.grey.shade700, fontSize: 8.5),
+                            //errorText: _validateName? 'This field cannot be blank' : null,
+                          ),
+                          onChanged: (value){
+                            if(selectedDiscount == Discounts.percentage){
+                              if(double.tryParse(value)!=null && double.parse(value)>100.00){
+                                valueController.text = '100.00';
+                                valueController.selection = TextSelection.fromPosition(
+                                  TextPosition(offset: valueController.text.length),
+                                );
+                              }
+                            }
+                          },
                         ),
                       ),
-
+                      const SizedBox(width: 10),
                     //when discount % max to 100.00, sigma RM max 12 length
-                      ToggleButtons(
-                        children: [
-                         
-                        ], 
+                    ToggleButtons(
+                        children: discountOptions.map((option){
+                          return Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(option.$2),
+                          );
+                        }).toList(), 
+                        borderRadius: BorderRadius.circular(5),
                         isSelected: isSelected,
                         onPressed: (int index){
-
+                          setState(() {
+                            for (int buttonIndex = 0; buttonIndex<isSelected.length; buttonIndex++){
+                              isSelected[buttonIndex] = buttonIndex == index;
+                            } 
+                            selectedDiscount = discountOptions[index].$1;
+                            valueController.text = '';
+                           
+                          });
                         },
-                      ),
+                        
+                        
+                      ), 
                     ],
                   ),
                 ],

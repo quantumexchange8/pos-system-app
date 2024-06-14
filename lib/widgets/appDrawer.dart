@@ -11,7 +11,7 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
       child: ListView(
         children: [
           DrawerHeader(
@@ -21,9 +21,9 @@ class AppDrawer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Owner', style: heading4Regular),
-                Text('POS 1', style: bodySregular),
-                Text('Business Name', style: bodyXSregular),
+                Text('Owner', style: heading4Regular.copyWith(color: Colors.white)),
+                Text('POS 1', style: bodySregular.copyWith(color: Colors.white)),
+                Text('Business Name', style: bodyXSregular.copyWith(color: Colors.white)),
               ],
             ),
           ),
@@ -95,7 +95,7 @@ class AppDrawer extends StatelessWidget {
         ],
       ),
       selected: selected,
-      selectedTileColor: Colors.grey.shade300,
+      selectedTileColor: Colors.grey.shade500,
       onTap: onTap,
     );
   }

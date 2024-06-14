@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pos_system/const/buttonStyle.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/AssignItem.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateItem.dart';
-import 'package:pos_system/pages/InsideItemPages/SubCategoriesPage.dart';
+import 'package:pos_system/widgets/categoryDataModel.dart';
 
 class CreateCategory extends StatefulWidget {
   const CreateCategory({super.key});
@@ -15,7 +16,8 @@ class CreateCategory extends StatefulWidget {
 
 class _CreateCategoryState extends State<CreateCategory> {
   TextEditingController CtgyNameController = TextEditingController();
-  Color _selectedColor = Colors.grey.shade400;
+  Color _selectedColor = Color(0xffe0e0e0);
+  bool _validateName = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +31,21 @@ class _CreateCategoryState extends State<CreateCategory> {
             onPressed: (){
               //need to handle save function, havent done
               
-                /* setState(() {
+                 setState(() {
                   _validateName = CtgyNameController.text.isEmpty;
                 });
                 
                 if(!_validateName) {
-                  Navigator.push(
+                DataCategory newCategory = DataCategory(
+                  color: _selectedColor.toString(), 
+                  name: CtgyNameController.text,
+                );
+                Navigator.pop(context,newCategory);
+                  /* Navigator.push(
                     context, 
-                    MaterialPageRoute(builder: (context)=>SubItems(),),
-                  );
-                } */
+                    MaterialPageRoute(builder: (context)=>SubCategories(),),
+                  ); */
+                } 
             }, 
             child: Text('SAVE', style: bodySregular.copyWith(color: Colors.white)),
           ),
@@ -47,8 +54,9 @@ class _CreateCategoryState extends State<CreateCategory> {
 
       body: Column(
         children: [
+         
           Container(
-            color: Colors.grey.shade200,
+            //color: Colors.grey.shade200,
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -60,7 +68,7 @@ class _CreateCategoryState extends State<CreateCategory> {
                       labelText: 'Category name',
                       labelStyle: heading4Regular,
                       contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
-                      //errorText: _validateName? 'This field cannot be blank' : null,
+                      errorText: _validateName? 'This field cannot be blank' : null,
                     ),
                   ),
               
@@ -106,8 +114,8 @@ class _CreateCategoryState extends State<CreateCategory> {
                       ),
                     ],
                   ),
-              
                  
+                  
               
                 ],
               ),
@@ -123,14 +131,14 @@ class _CreateCategoryState extends State<CreateCategory> {
 
   Widget _buildColorSelection(){
     List<Color>colors = [
-      Colors.grey.shade400,
-      Colors.red,
+      Color(0xffe0e0e0),
+      Color(0xffff2626),
       Color(0xffff0094),
       Color(0xffffa146),
       Color(0xffefdd60),
-      Colors.green,
-      Colors.blue,
-      Colors.purple,
+      Color(0xff71d200),
+      Color(0xff4e9bff),
+      Color(0xffc11bff),
     ];
     return Padding(
       padding: EdgeInsets.only(top: 10),

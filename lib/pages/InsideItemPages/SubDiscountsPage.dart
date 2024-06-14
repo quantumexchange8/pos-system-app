@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateDiscounts.dart';
+import 'package:pos_system/widgets/discountDataModel.dart';
 
 class SubDiscounts extends StatefulWidget {
   const SubDiscounts({super.key});
@@ -12,6 +13,7 @@ class SubDiscounts extends StatefulWidget {
 
 class _SubDiscountsState extends State<SubDiscounts> {
   bool isSearching = false;
+  List<DiscountData> discountData = [];
 
   @override
   Widget build(BuildContext context) {
@@ -59,17 +61,28 @@ class _SubDiscountsState extends State<SubDiscounts> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(40),
           ),
-          onPressed: (){
-            Navigator.push(
+          onPressed: () async {
+            final newDiscount = await Navigator.push(
               context, 
               MaterialPageRoute(builder: (context)=> CreateDiscounts(),
               ),
             );
+            if(newDiscount!=null){
+              setState(() {
+                discountData.add(newDiscount);
+              });
+            }
           },    
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
-      body: Padding(
+      body:  discountData.isEmpty?_buildDefaultView(): _buildDiscountList(),
+    );
+  }
+
+
+  Widget _buildDefaultView(){
+    return  Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
           child: Column(
@@ -95,7 +108,51 @@ class _SubDiscountsState extends State<SubDiscounts> {
             ],
           ),
         ),
-      ),
+      );
+  }
+
+  Widget _buildDiscountList(){
+    return ListView.builder(
+      itemCount: discountData.length,
+      itemBuilder: (context,index){
+        final pdiscount = discountData[index];
+
+        return ListTile(
+          title: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.shade200,
+                        ),
+                        child: Icon(Icons.sell_outlined, size: 20),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(pdiscount.name, style: bodySregular),
+                    ],
+                  ),
+                  Text(pdiscount.discount),
+                ],
+              ),
+              Divider(
+                height: 5,
+                color: Colors.grey.shade300, 
+                thickness: 1, 
+                indent: 40, 
+                endIndent: 0,
+              ),
+
+            ],
+          ),
+        );
+      }
     );
   }
 }

@@ -9,10 +9,13 @@ import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/DrawerPages/Items.dart';
 import 'package:pos_system/pages/DrawerPages/Receipts.dart';
 import 'package:pos_system/pages/DrawerPages/Settings.dart';
+import 'package:pos_system/pages/DrawerPages/apps.dart';
+import 'package:pos_system/pages/DrawerPages/backOffice.dart';
+import 'package:pos_system/pages/DrawerPages/support.dart';
 import 'package:pos_system/pages/Homepage.dart';
-import 'package:pos_system/pages/InsideShiftPage.dart/CashManagement.dart';
-import 'package:pos_system/pages/InsideShiftPage.dart/CloseShift.dart';
-import 'package:pos_system/pages/InsideShiftPage.dart/ShiftsHistory.dart';
+import 'package:pos_system/pages/InsideShiftPages/CashManagement.dart';
+import 'package:pos_system/pages/InsideShiftPages/CloseShift.dart';
+import 'package:pos_system/pages/InsideShiftPages/ShiftsHistory.dart';
 import 'package:pos_system/widgets/appDrawer.dart';
 import 'package:intl/intl.dart';
 
@@ -111,11 +114,26 @@ class _ShiftState extends State<Shift> {
            Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const Settings(),
+              builder: (context) => const BackOffice(),
             ),
           );
           break;
-        // Add more cases if needed
+        case 6:
+           Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Apps(),
+            ),
+          );
+          break;
+        case 7:
+           Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Support(),
+            ),
+          );
+          break;
       }
     }
   }

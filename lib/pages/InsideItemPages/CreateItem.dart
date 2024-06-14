@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
-import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pos_system/const/constant.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateCategory.dart';
-import 'package:pos_system/pages/InsideItemPages/SubItemPage.dart';
+import 'package:pos_system/widgets/itemDataModel.dart';
 import 'package:shape_of_view_null_safe/shape_of_view_null_safe.dart';
 
 enum soldBy {Each, Weight}
@@ -34,10 +33,16 @@ class _CreateItemState extends State<CreateItem> {
   String? _selectedCategory = 'No category';
   soldBy? _by = soldBy.Each;
   design? _design = design.Color_and_shape;
-  Color _selectedColor = Colors.grey.shade400;
-  String _selectedShape = 'square';
+  Color _selectedColor = Color(0xffe0e0e0);
+  int _selectedShape = 0;
   File? _image;
   final ImagePicker _picker = ImagePicker();
+  List<Shape>shapes = [
+      RoundRectShape(borderRadius: BorderRadius.circular(0)),
+      CircleShape(),
+      PolygonShape(numberOfSides: 8),
+      StarShape(noOfPoints: 5),
+  ];
 
   Future<void> getImage(ImageSource source) async{
     try{
@@ -87,10 +92,27 @@ class _CreateItemState extends State<CreateItem> {
                 });
                 
                 if(!_validateName) {
-                  Navigator.push(
+                  Item newItem = Item(
+                    name: nameController.text, 
+                    category: _selectedCategory!,
+                    soldBy: _by == soldBy.Each? 'Each':'Weight',
+                    design: _design == design.Color_and_shape? 'Color and Shape':'Image',
+                    price: priceController.text,
+                    cost: costController.text,
+                    sku: skuController.text,
+                    barcode: barcodeController.text,
+                    trackStock: _switchStates['Track stock'] ?? false,
+                    stock: stockController.text,
+                    color: _selectedColor.toString(),
+                    shape: shapes[_selectedShape],
+                    imagePath: _image?.path,
+                  );
+
+                  Navigator.pop(context, newItem);
+                  /* Navigator.push(
                     context, 
                     MaterialPageRoute(builder: (context)=>SubItems(),),
-                  );
+                  ); */
                 }
             }, 
             child: Text('SAVE', style: bodySregular.copyWith(color: Colors.white)),
@@ -102,8 +124,12 @@ class _CreateItemState extends State<CreateItem> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+             Container(
               color: Colors.grey.shade200,
+              height: 15,
+            ),
+            Container(
+              //color: Colors.grey.shade200,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -123,7 +149,7 @@ class _CreateItemState extends State<CreateItem> {
               
                     DropdownButtonFormField<String>(
                       value: _selectedCategory,
-                      style: TextStyle(color: Colors.grey.shade700),
+                      style: bodySregular.copyWith(color: Theme.of(context).colorScheme.secondary),
                       items: ['No category', 'Create category'].map((String category){
                         return DropdownMenuItem<String>(
                           value: category,
@@ -235,11 +261,14 @@ class _CreateItemState extends State<CreateItem> {
                 ),
               ),
             ),
-            const SizedBox(height: 15),
+            Container(
+              color: Colors.grey.shade200,
+              height: 15,
+            ),
 
 //part 2 
             Container(
-              color: Colors.grey.shade200,
+             // color: Colors.grey.shade200,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -279,6 +308,7 @@ class _CreateItemState extends State<CreateItem> {
                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
                               child: TextField(
                                 controller: stockController,
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   labelText: 'In stock',
                                   labelStyle: heading4Regular,
@@ -295,9 +325,12 @@ class _CreateItemState extends State<CreateItem> {
               ),
             ),
 //part 3
-            const SizedBox(height: 15),
             Container(
               color: Colors.grey.shade200,
+              height: 15,
+            ),
+            Container(
+              //color: Colors.grey.shade200,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -356,17 +389,17 @@ class _CreateItemState extends State<CreateItem> {
   //Widget for choosing color and shape
   Widget _buildColorSelection(){
     List<Color>colors = [
-      Colors.grey.shade400,
-      Colors.red,
+      Color(0xffe0e0e0),
+      Color(0xffff2626),
       Color(0xffff0094),
       Color(0xffffa146),
       Color(0xffefdd60),
-      Colors.green,
-      Colors.blue,
-      Colors.purple,
+      Color(0xff71d200),
+      Color(0xff4e9bff),
+      Color(0xffc11bff),
     ];
     return Padding(
-      padding: EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(top: 10),
       child: Container(
         height: 200,
         child: GridView.builder(
@@ -401,39 +434,10 @@ class _CreateItemState extends State<CreateItem> {
     );
   }
 
- /*  void _showColorPicker(BuildContext context, Color initialColor) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: ColorPicker(
-          color: initialColor,
-          onColorChanged: (Color color) {
-            // Handle color change
-          },
-         /*  heading: Text(
-            'Select color',
-            style: Theme.of(context).textTheme.headline6,
-          ),
-          subheading: Text(
-            'Select color shade',
-            style: Theme.of(context).textTheme.subtitle1,
-          ), */
-        ),
-        /* actions: <Widget>[
-          ElevatedButton(
-            child: Text('Close'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ], */
-      ),
-    );
-  } */
-
+ 
 //Widget for shape
  Widget _buildShapeSelection(){
-  List<String>shapes = ['square','circle','polygon','star'];
+ 
 
   return Padding(
     padding: const EdgeInsets.only(bottom: 10),
@@ -448,23 +452,23 @@ class _CreateItemState extends State<CreateItem> {
           ), 
           itemCount: shapes.length,
           itemBuilder: ((context, index){
-             String shape = shapes[index];
+             Shape shape = shapes[index];
+             //bool isSelected = _selectedShape == shape;
              return GestureDetector(
               onTap: (){
                  setState(() {
-                  _selectedShape = shapes[index];
+                  _selectedShape = index;
                 }); 
               },
                child: ShapeOfView(
-                shape: _getShape(shape),
+                shape: shape,
                 child: Container(
                   width: 70,
                   height: 70,
-                  color: Theme.of(context).colorScheme.background, // Example color
+                  color: Colors.white, // Example color
                   alignment: Alignment.center,
-                  //child: Text(shape.toUpperCase(), style: TextStyle(color: Colors.black)),
-                  child: _selectedShape == shapes[index]?
-                  Icon(Icons.check, color: Theme.of(context).colorScheme.secondary,size: 35):null,
+                  child: _selectedShape ==index?
+                  Icon(Icons.check, color: Colors.black ,size: 35):null,
                 ),
               ), 
               
@@ -476,7 +480,7 @@ class _CreateItemState extends State<CreateItem> {
   );
 }
 
-Shape _getShape(String shapeName) {
+/* Shape _getShape(String shapeName) {
     switch (shapeName) {
       case 'star':
         return StarShape(noOfPoints: 5);
@@ -487,7 +491,7 @@ Shape _getShape(String shapeName) {
       default:
         return RoundRectShape(borderRadius: BorderRadius.circular(0));
     }
-  } 
+  }  */
 
 
   //Widget for choosing or taking photo

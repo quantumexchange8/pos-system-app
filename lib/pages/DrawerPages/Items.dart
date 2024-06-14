@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pos_system/const/constant.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/DrawerPages/Receipts.dart';
 import 'package:pos_system/pages/DrawerPages/Settings.dart';
 import 'package:pos_system/pages/DrawerPages/Shift.dart';
+import 'package:pos_system/pages/DrawerPages/apps.dart';
+import 'package:pos_system/pages/DrawerPages/backOffice.dart';
+import 'package:pos_system/pages/DrawerPages/support.dart';
 import 'package:pos_system/pages/Homepage.dart';
 import 'package:pos_system/pages/InsideItemPages/SubCategoriesPage.dart';
 import 'package:pos_system/pages/InsideItemPages/SubDiscountsPage.dart';
@@ -68,20 +72,37 @@ class _ItemsState extends State<Items> {
            Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const Settings(),
+              builder: (context) => const BackOffice(),
             ),
           );
           break;
-        // Add more cases if needed
+        case 6:
+           Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Apps(),
+            ),
+          );
+          break;
+        case 7:
+           Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Support(),
+            ),
+          );
+          break;
       }
     }
   }
+
+  
   @override
   Widget build(BuildContext context) {
     
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.tertiary,
+        backgroundColor: primaryBlue.shade900,
         title: Text('Items', style: bodyMregular.copyWith(color: Colors.white)),
       ),
       drawer: AppDrawer(selectedIndex: _selectedIndex, onTap: _onItemTapped),

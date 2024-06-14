@@ -19,7 +19,7 @@ class BlueButton extends StatelessWidget {
         backgroundColor: MaterialStateColor.resolveWith((states) => primaryBlue.shade900),
         fixedSize: MaterialStateProperty.all<Size>(const Size.fromHeight(40)),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(0)
+          borderRadius: BorderRadius.circular(5)
         ),),
       ),
       
@@ -52,7 +52,7 @@ class BlueOutlineButton extends StatelessWidget {
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all<Size>(const Size.fromHeight(40)),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(0)
+          borderRadius: BorderRadius.circular(5)
         ),),
         side: MaterialStateProperty.all<BorderSide>(
           BorderSide(color: primaryBlue.shade900),
@@ -90,7 +90,7 @@ class CustomOutlineButton extends StatelessWidget {
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all<Size>(const Size.fromHeight(40)),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(0)
+          borderRadius: BorderRadius.circular(5)
         ),),
         side: MaterialStateProperty.all<BorderSide>(
           BorderSide(color: borderColor),
@@ -104,6 +104,42 @@ class CustomOutlineButton extends StatelessWidget {
         color: textColor,
         ),
       ),
+    );
+  }
+}
+
+class BlueIconButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String text;
+  final IconData icon;
+
+  const BlueIconButton({super.key,
+  required this.onPressed,
+  required this.text,
+  required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton.icon(
+      onPressed: onPressed,
+      style: ButtonStyle(
+        backgroundColor: MaterialStateColor.resolveWith((states) => primaryBlue.shade900),
+        fixedSize: MaterialStateProperty.all<Size>(const Size.fromHeight(40)),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5)
+        ),),
+      ),
+      
+      icon: Icon(icon), 
+      label: Text(
+        text, style:TextStyle(
+          fontFamily: GoogleFonts.poppins().fontFamily,
+          fontWeight: FontWeight.bold,
+          fontSize: 11,
+          color: Colors.white,
+          ),
+        ),
     );
   }
 }

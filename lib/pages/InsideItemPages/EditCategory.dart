@@ -46,8 +46,9 @@ class _EditCategoryState extends State<EditCategory> {
 
       body: Column(
         children: [
+          
           Container(
-            color: Colors.grey.shade200,
+            //color: Colors.grey.shade200,
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -112,7 +113,7 @@ class _EditCategoryState extends State<EditCategory> {
               ),
             ),
           ),
-          const SizedBox(height: 15),
+        
            Container(
             height: 40,
             color: Colors.grey.shade200,

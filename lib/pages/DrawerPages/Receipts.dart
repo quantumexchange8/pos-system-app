@@ -4,6 +4,9 @@ import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/DrawerPages/Items.dart';
 import 'package:pos_system/pages/DrawerPages/Settings.dart';
 import 'package:pos_system/pages/DrawerPages/Shift.dart';
+import 'package:pos_system/pages/DrawerPages/apps.dart';
+import 'package:pos_system/pages/DrawerPages/backOffice.dart';
+import 'package:pos_system/pages/DrawerPages/support.dart';
 import 'package:pos_system/pages/Homepage.dart';
 import 'package:pos_system/widgets/appDrawer.dart';
 
@@ -73,23 +76,38 @@ class _ReceiptsState extends State<Receipts> {
            Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const Settings(),
+              builder: (context) => const BackOffice(),
             ),
           );
           break;
-        // Add more cases if needed
+        case 6:
+           Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Apps(),
+            ),
+          );
+          break;
+        case 7:
+           Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Support(),
+            ),
+          );
+          break;
       }
     }
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: false,
       onDrawerChanged: (isOpened) {
         FocusScope.of(context).unfocus();
       },
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.tertiary,
+        backgroundColor: primaryBlue.shade900,
         title: Text('Receipts', style: bodyMregular.copyWith(color: Colors.white)),
       ),
       drawer: AppDrawer(selectedIndex: _selectedIndex, onTap: _onItemTapped),
@@ -107,7 +125,7 @@ class _ReceiptsState extends State<Receipts> {
                   height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
-                    color: Colors.grey.shade200,
+                    color: Theme.of(context).colorScheme.background,
                     border: 
                     Border(
                       bottom: BorderSide(color: Colors.grey.shade400, width: 1),
@@ -123,7 +141,7 @@ class _ReceiptsState extends State<Receipts> {
                   height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
-                    color: Colors.grey.shade200,
+                    color: Theme.of(context).colorScheme.background,
                     border: 
                     Border(
                       bottom: BorderSide(color: Colors.grey.shade400, width: 1),
@@ -154,7 +172,7 @@ class _ReceiptsState extends State<Receipts> {
                    height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
-                    color: Colors.grey.shade200,
+                    color: Theme.of(context).colorScheme.background,
                     border: 
                     Border(
                       bottom: BorderSide(color: Colors.grey.shade400, width: 1),
