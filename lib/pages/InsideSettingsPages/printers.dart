@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:pos_system/const/constant.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideSettingsPages/AddPrinter.dart';
-import 'package:pos_system/pages/InsideSettingsPages/EditPrinter.dart';
 
 class PrintersPage extends StatefulWidget {
   const PrintersPage({super.key});

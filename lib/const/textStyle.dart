@@ -7,6 +7,12 @@ final heading1Bold = TextStyle(
   fontFamily: GoogleFonts.poppins().fontFamily,
 );
 
+final heading2Bold = TextStyle(
+  fontSize: 38,
+  fontWeight: FontWeight.bold,
+  fontFamily: GoogleFonts.poppins().fontFamily,
+);
+
 final heading3Regular = TextStyle(
   fontSize: 18,
   fontWeight: FontWeight.normal,

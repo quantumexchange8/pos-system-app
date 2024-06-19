@@ -480,19 +480,6 @@ class _CreateItemState extends State<CreateItem> {
   );
 }
 
-/* Shape _getShape(String shapeName) {
-    switch (shapeName) {
-      case 'star':
-        return StarShape(noOfPoints: 5);
-      case 'circle':
-        return CircleShape();
-      case 'polygon':
-        return PolygonShape(numberOfSides: 8);
-      default:
-        return RoundRectShape(borderRadius: BorderRadius.circular(0));
-    }
-  }  */
-
 
   //Widget for choosing or taking photo
   Widget _buildImageSelection(){

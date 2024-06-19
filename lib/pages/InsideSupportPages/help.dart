@@ -19,7 +19,7 @@ class _HelpPageState extends State<HelpPage> {
             backgroundColor: Theme.of(context).colorScheme.tertiary,
           ),
     body: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
               _ItemsListOnTap(
@@ -54,7 +54,16 @@ class _HelpPageState extends State<HelpPage> {
     Widget _ItemsListOnTap(IconData icon, String title, VoidCallback onTap){
       return Column(
         children: [
-          GestureDetector(
+          SizedBox(
+            height: 40,
+            child: ListTile(
+              onTap: onTap,
+              leading: Icon(icon, size: 20),
+              title: Text(title, style: bodySregular),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 1),
+            ),
+          ),
+          /* GestureDetector(
             onTap: onTap,
             child: Row(
               children: [
@@ -63,10 +72,10 @@ class _HelpPageState extends State<HelpPage> {
                 Text(title, style: bodySregular),
               ],
             ),
-          ),
+          ), */
           
           Divider(
-            height: 30,
+            //height: 30,
             color: Colors.grey.shade300, 
             thickness: 1, 
             indent: 40, 

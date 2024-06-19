@@ -96,6 +96,11 @@ class _SettingsState extends State<Settings> {
       }
     }
   }
+
+  /* void _logout(){
+    Navigator.popUntil(context, ModalRoute.withName('/OnBoardingPage'));
+  } */
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,7 +111,7 @@ class _SettingsState extends State<Settings> {
       drawer: AppDrawer(selectedIndex: _selectedIndex, onTap: _onItemTapped),
 
       body: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
               _ItemsListOnTap(
@@ -139,13 +144,13 @@ class _SettingsState extends State<Settings> {
               children: [
                 Expanded(
                   child: BlueOutlineButton(
-                    onPressed: (){
+                    onPressed: /* _logout, */ (){
                       Navigator.pushReplacement(context, 
                       MaterialPageRoute(
                         builder: (context)=>OnBoardingPage(),
                         ),
                       );
-                    }, 
+                    },  
                     text: 'SIGN OUT'
                   ),
                 ),
@@ -162,7 +167,16 @@ class _SettingsState extends State<Settings> {
     Widget _ItemsListOnTap(IconData icon, String title, VoidCallback onTap){
       return Column(
         children: [
-          GestureDetector(
+           SizedBox(
+            height: 40,
+            child: ListTile(
+              onTap: onTap,
+              leading: Icon(icon, size: 20),
+              title: Text(title, style: bodySregular),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 1),
+            ),
+          ),
+          /* GestureDetector(
             onTap: onTap,
             child: Row(
               children: [
@@ -171,10 +185,10 @@ class _SettingsState extends State<Settings> {
                 Text(title, style: bodySregular),
               ],
             ),
-          ),
+          ), */
           
           Divider(
-            height: 30,
+            //height: 30,
             color: Colors.grey.shade300, 
             thickness: 1, 
             indent: 40, 

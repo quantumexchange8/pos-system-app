@@ -235,7 +235,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               child: const Text('OK'),
                             ),
                           ],
-                        )
+                        ),
                       );
                     }, 
                     text: 'SIGN UP'

@@ -71,97 +71,99 @@ class _CashManagementState extends State<CashManagement> {
         title: Text('Cash management', style: bodyMregular.copyWith(color: Colors.white),),
         backgroundColor: Theme.of(context).colorScheme.tertiary,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: _amountController,
-              onChanged: (value) {
-                setState(() {
-                  isFilled = value.isNotEmpty;
-                });
-              },
-              //initialValue: _formatter.formatDouble(0.00),
-              inputFormatters: <TextInputFormatter>[
-                _formatter,
-                LengthLimitingTextInputFormatter(12),
-              ],
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'Amount',
-                labelStyle: heading4Regular,
-              ),
-            ),
-            const SizedBox(height: 30),
-            TextField(
-              controller: _commentController,
-              maxLines: 1,
-              maxLength: 25,
-              decoration: InputDecoration(
-                labelText: 'Comment',
-                counterText: '',
-                labelStyle: heading4Regular,
-                contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: isFilled? BlueOutlineButton(
-                    onPressed: () => _addRecord('PAY IN'),
-                    text: 'PAY IN'
-                  ): CustomOutlineButton(
-                    onPressed: (){}, 
-                    text: 'PAY IN', 
-                    borderColor: Colors.grey, 
-                    textColor: Colors.grey,
-                  ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: _amountController,
+                onChanged: (value) {
+                  setState(() {
+                    isFilled = value.isNotEmpty;
+                  });
+                },
+                //initialValue: _formatter.formatDouble(0.00),
+                inputFormatters: <TextInputFormatter>[
+                  _formatter,
+                  LengthLimitingTextInputFormatter(12),
+                ],
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Amount',
+                  labelStyle: heading4Regular,
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomOutlineButton(
-                    onPressed: isFilled? ()=> _addRecord('PAY OUT'): (){}, 
-                    text: 'PAY OUT', 
-                    borderColor: isFilled? Colors.red: Colors.grey, 
-                    textColor: isFilled? Colors.red: Colors.grey,
-                  ),
+              ),
+              const SizedBox(height: 30),
+              TextField(
+                controller: _commentController,
+                maxLines: 1,
+                maxLength: 25,
+                decoration: InputDecoration(
+                  labelText: 'Comment',
+                  counterText: '',
+                  labelStyle: heading4Regular,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
                 ),
-              ],
-            ),
-
-            Divider(thickness: 1, color: Colors.grey.shade300),
-            const SizedBox(height:10),
-            Text('Pay in/Pay out', style: bodyXSregular.copyWith(color: primaryBlue.shade900),),
-            const SizedBox(height: 15),
-            ...records.reversed.map((record){
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(record.time, style: bodySregular),
-                        const SizedBox(width: 10),
-                        Text('Owner ${record.comment.isNotEmpty? '- ${record.comment}': ''}', style: bodySregular),
-                      ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: isFilled? BlueOutlineButton(
+                      onPressed: () => _addRecord('PAY IN'),
+                      text: 'PAY IN'
+                    ): CustomOutlineButton(
+                      onPressed: (){}, 
+                      text: 'PAY IN', 
+                      borderColor: Colors.grey, 
+                      textColor: Colors.grey,
                     ),
-                    Text('${record.type == 'PAY OUT'? '-' : ''}RM${record.amount.toStringAsFixed(2)}',
-                      style:bodySregular, textAlign: TextAlign.end),
-                  ],
-                ),
-                );
-            }),
-
-          ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomOutlineButton(
+                      onPressed: isFilled? ()=> _addRecord('PAY OUT'): (){}, 
+                      text: 'PAY OUT', 
+                      borderColor: isFilled? Colors.red: Colors.grey, 
+                      textColor: isFilled? Colors.red: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+        
+              Divider(thickness: 1, color: Colors.grey.shade300),
+              const SizedBox(height:10),
+              Text('Pay in/Pay out', style: bodyXSregular.copyWith(color: primaryBlue.shade900),),
+              const SizedBox(height: 15),
+              ...records.reversed.map((record){
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(record.time, style: bodySregular),
+                          const SizedBox(width: 10),
+                          Text('Owner ${record.comment.isNotEmpty? '- ${record.comment}': ''}', style: bodySregular),
+                        ],
+                      ),
+                      Text('${record.type == 'PAY OUT'? '-' : ''}RM${record.amount.toStringAsFixed(2)}',
+                        style:bodySregular, textAlign: TextAlign.end),
+                    ],
+                  ),
+                  );
+              }),
+        
+            ],
+          ),
         ),
       ),
     );

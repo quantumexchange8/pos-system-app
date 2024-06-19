@@ -17,7 +17,7 @@ class _AddPrinterState extends State<AddPrinter> {
   String dropdownValue = "No printer";
 
   final Map<String, bool> _switchStates = {
-    'Print receipt and bills':false,
+    'Print receipts and bills':false,
     'Print orders': false,
     'Automatically print receipt': false,
     'Print single item per order ticket' : false,
