@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pos_system/const/categoryProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateCategory.dart';
+import 'package:pos_system/pages/InsideItemPages/EditCategory.dart';
 import 'package:pos_system/widgets/categoryDataModel.dart';
+import 'package:provider/provider.dart';
 
 class SubCategories extends StatefulWidget {
   const SubCategories({super.key});
@@ -13,10 +16,13 @@ class SubCategories extends StatefulWidget {
 
 class _SubCategoriesState extends State<SubCategories> {
   bool isSearching = false;
-  List<DataCategory> dataCategory = [];
+  //List<DataCategory> dataCategory = [];
 
   @override
   Widget build(BuildContext context) {
+    final categoryProvider = Provider.of<CategoryProvider>(context);
+    List<DataCategory> dataCategory = categoryProvider.categories;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -75,7 +81,7 @@ class _SubCategoriesState extends State<SubCategories> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
-      body: dataCategory.isEmpty? _buildDefaultView():_buildCategoryList(),
+      body: dataCategory.isEmpty? _buildDefaultView():_buildCategoryList(categoryProvider.categories),
     );
   }
 
@@ -112,7 +118,7 @@ Widget _buildDefaultView(){
 }
 
 
-Widget _buildCategoryList(){
+Widget _buildCategoryList(List<DataCategory> dataCategory){
   return ListView.builder(
     itemCount: dataCategory.length,
     itemBuilder: (context, index){
@@ -152,12 +158,43 @@ Widget _buildCategoryList(){
           ),
         ],
       ),
+      onTap: () async {
+        final updatedCategory = await
+        Navigator.push(
+          context, 
+          MaterialPageRoute(
+            builder: (context)=>EditCategory(dataCategory:dCategory),
+          ),
+        );
+        if(updatedCategory!=null){
+          Provider.of<CategoryProvider>(context,listen: false).updateCategory(dCategory, updatedCategory);
+        }
+      },
     );
     },
   );
 }
 
 Color _convertColor(String colorString) {
+  // Remove '#' and 'Color(' prefixes and ')' suffixes if present
+  colorString = colorString.replaceAll('#', '');
+  if (colorString.startsWith('Color(')) {
+    colorString = colorString.substring(6, colorString.length - 1);
+  }
+
+  // Ensure the string starts with '0xff' or '0xffffffff' format
+  if (!colorString.startsWith('0x')) {
+    colorString = '0xff' + colorString;
+  } else if (colorString.length == 8) {
+    colorString = '0xff' + colorString.substring(2);
+  }
+
+  // Parse the color string to an integer and return Color object
+  return Color(int.parse(colorString));
+}
+
+
+/* Color _convertColor(String colorString) {
   // Remove 'Color(' prefix and ')' suffix
   if (colorString.startsWith('Color(')) {
     colorString = colorString.substring(6, colorString.length - 1);
@@ -166,10 +203,10 @@ Color _convertColor(String colorString) {
   // Ensure the string starts with '0xff'
   if (!colorString.startsWith('0xff')) {
     colorString = '0xff' + colorString;
-  }
+  } 
 
   return Color(int.parse(colorString));
-}
+} */
 
 
 

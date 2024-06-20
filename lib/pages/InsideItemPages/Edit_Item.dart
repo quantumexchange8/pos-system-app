@@ -6,36 +6,51 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pos_system/const/constant.dart';
+import 'package:pos_system/const/itemProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateCategory.dart';
 import 'package:pos_system/pages/InsideItemPages/SubItemPage.dart';
+import 'package:pos_system/widgets/itemDataModel.dart';
+import 'package:provider/provider.dart';
 import 'package:shape_of_view_null_safe/shape_of_view_null_safe.dart';
+
 
 enum soldBy {Each, Weight}
 enum design {Color_and_shape, Image}
 
 class EditItem extends StatefulWidget {
-  const EditItem({super.key});
+
+  final Item item;
+  EditItem({Key? key, required this.item}):super(key: key);
 
   @override
   State<EditItem> createState() => _EditItemState();
 }
 
 class _EditItemState extends State<EditItem> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
-  TextEditingController costController = TextEditingController(text: 'RM0.00');
-  TextEditingController skuController = TextEditingController(text: '10000');
-  TextEditingController barcodeController = TextEditingController();
-  TextEditingController stockController = TextEditingController(text: '0');
+  //initialize the text controllers with the item data passed from 'SubItem'
+  late TextEditingController nameController;
+  late TextEditingController priceController;
+  late TextEditingController costController;
+  late TextEditingController skuController;
+  late TextEditingController barcodeController;
+  late TextEditingController stockController;
   bool _validateName = false;
-  String? _selectedCategory = 'No category';
+  late String? _selectedCategory = 'No category';
   soldBy? _by = soldBy.Each;
   design? _design = design.Color_and_shape;
-  Color _selectedColor = Colors.grey.shade400;
-  String _selectedShape = 'square';
+  late Color _selectedColor;
+  late int _selectedShape;
   File? _image;
   final ImagePicker _picker = ImagePicker();
+
+
+  List<Shape>shapes = [
+      RoundRectShape(borderRadius: BorderRadius.circular(0)),
+      CircleShape(),
+      PolygonShape(numberOfSides: 8),
+      StarShape(noOfPoints: 5),
+  ];
 
   Future<void> getImage(ImageSource source) async{
     try{
@@ -67,7 +82,29 @@ class _EditItemState extends State<EditItem> {
     'Track stock':false,
   };
 
+  @override 
+  void initState(){
+    nameController = TextEditingController(text: widget.item.name);
+    priceController = TextEditingController(text: widget.item.price);
+    costController = TextEditingController(text: widget.item.cost);
+    skuController = TextEditingController(text: widget.item.sku);
+    barcodeController = TextEditingController(text: widget.item.barcode);
+    stockController = TextEditingController(text: widget.item.stock);
+    //_selectedColor = Color(int.parse(widget.item.color.replaceFirst('Color(0xff', '').replaceFirst(')', ''), radix: 16));
+    _selectedColor = _convertColor(widget.item.color);
+    _selectedShape = shapes.indexWhere((shape) => shape.runtimeType == widget.item.shape.runtimeType);
 
+    //_selectedShape = 0;//shapes.indexOf(widget.item.shape);
+    _selectedCategory = widget.item.category;
+    _by = widget.item.soldBy == 'Each' ? soldBy.Each : soldBy.Weight;
+    _design = widget.item.design == 'Color and shape' ? design.Color_and_shape : design.Image;
+    _switchStates['Track stock'] = widget.item.trackStock;
+    
+      if(widget.item.imagePath!=null){
+      _image = File(widget.item.imagePath!);
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,17 +115,46 @@ class _EditItemState extends State<EditItem> {
         actions: [
           TextButton(
             onPressed: (){
-              //need to handle save function, havent done
-              
+              //need to handle save function
                 setState(() {
                   _validateName = nameController.text.isEmpty;
                 });
                 
-                if(!_validateName) {
-                  Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (context)=>SubItems(),),
+                if(!_validateName) { 
+                Item updatedItem = Item(
+                  name: nameController.text, 
+                  category:  _selectedCategory!, 
+                  soldBy: _by == soldBy.Each?'Each':'Weight', 
+                  design: _design == design.Color_and_shape? 'Color and shape':'Image', 
+                  price: priceController.text, 
+                  cost: costController.text, 
+                  sku: skuController.text, 
+                  barcode: barcodeController.text, 
+                  trackStock: _switchStates['Track stock']?? false, 
+                  stock: stockController.text, 
+                  color: '#${_selectedColor.value.toRadixString(16).padLeft(8,'0')}', 
+                  shape: shapes[_selectedShape],
+                  imagePath: _image?.path,
                   );
+
+                 /*  widget.item.name = nameController.text;
+                  widget.item.price = priceController.text;
+                  widget.item.cost = costController.text;
+                  widget.item.sku = skuController.text;
+                  widget.item.barcode = barcodeController.text;
+                  widget.item.stock = stockController.text;
+                  widget.item.color = _selectedColor.value.toString();
+                  widget.item.category = _selectedCategory!;
+                  widget.item.soldBy = _by == soldBy.Each?'Each':'Weight';
+                  widget.item.design = _design == design.Color_and_shape? 'Color and shape':'Image';
+                  widget.item.trackStock = _switchStates['Track stock']?? false;
+                  widget.item.shape = shapes[_selectedShape];
+                  widget.item.imagePath = _image?.path;
+ */
+                  //update at provider
+                  final itemProvider = Provider.of<ItemProvider>(context,listen:false);
+                  itemProvider.updateItem(widget.item, updatedItem);
+                  Navigator.pop(context);
                 }
             }, 
             child: Text('SAVE', style: bodySregular.copyWith(color: Colors.white)),
@@ -300,7 +366,7 @@ class _EditItemState extends State<EditItem> {
               ),
             ),
 //part 3
-            Container(
+                   Container(
               color: Colors.grey.shade200,
               height: 15,
             ),
@@ -341,7 +407,7 @@ class _EditItemState extends State<EditItem> {
 
                     //need to save and display the design, havent done
                     if(_design == design.Color_and_shape) ...[
-                      _buildColorAndShapeSelection(),
+                      _buildColorSelection(),
                       _buildShapeSelection(),
                     ]else if (_design == design.Image)...[
                       _buildImageSelection(),
@@ -423,19 +489,19 @@ class _EditItemState extends State<EditItem> {
   }
 
   //Widget for choosing color and shape
-  Widget _buildColorAndShapeSelection(){
+  Widget _buildColorSelection(){
     List<Color>colors = [
-      Colors.grey.shade400,
-      Colors.red,
+      Color(0xffe0e0e0),
+      Color(0xffff2626),
       Color(0xffff0094),
       Color(0xffffa146),
       Color(0xffefdd60),
-      Colors.green,
-      Colors.blue,
-      Colors.purple,
+      Color(0xff71d200),
+      Color(0xff4e9bff),
+      Color(0xffc11bff),
     ];
     return Padding(
-      padding: EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(top: 10),
       child: Container(
         height: 200,
         child: GridView.builder(
@@ -470,93 +536,46 @@ class _EditItemState extends State<EditItem> {
     );
   }
 
- /*  void _showColorPicker(BuildContext context, Color initialColor) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: ColorPicker(
-          color: initialColor,
-          onColorChanged: (Color color) {
-            // Handle color change
-          },
-         /*  heading: Text(
-            'Select color',
-            style: Theme.of(context).textTheme.headline6,
-          ),
-          subheading: Text(
-            'Select color shade',
-            style: Theme.of(context).textTheme.subtitle1,
-          ), */
-        ),
-        /* actions: <Widget>[
-          ElevatedButton(
-            child: Text('Close'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ], */
-      ),
-    );
-  } */
-
+ 
 //Widget for shape
- Widget _buildShapeSelection(){
-  List<String>shapes = ['square','circle','polygon','star'];
-
+ Widget _buildShapeSelection() {
   return Padding(
     padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-        height: 100,
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            childAspectRatio: 1,
-            crossAxisSpacing: 25,
-            mainAxisSpacing: 25,
-          ), 
-          itemCount: shapes.length,
-          itemBuilder: ((context, index){
-             String shape = shapes[index];
-             return GestureDetector(
-              onTap: (){
-                 setState(() {
-                  _selectedShape = shapes[index];
-                }); 
-              },
-               child: ShapeOfView(
-                shape: _getShape(shape),
-                child: Container(
-                  width: 70,
-                  height: 70,
-                  color: Theme.of(context).colorScheme.secondary, // Example color
-                  alignment: Alignment.center,
-                  //child: Text(shape.toUpperCase(), style: TextStyle(color: Colors.black)),
-                  child: _selectedShape == shapes[index]?
-                  Icon(Icons.check, color: Theme.of(context).colorScheme.background,size: 35):null,
-                ),
-              ), 
-              
-            ); 
-          })
+    child: Container(
+      height: 100,
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4,
+          childAspectRatio: 1,
+          crossAxisSpacing: 25,
+          mainAxisSpacing: 25,
         ),
+        itemCount: shapes.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedShape = index; // Ensure index is within valid range
+              });
+            },
+            child: ShapeOfView(
+              shape: shapes[index],
+              child: Container(
+                width: 70,
+                height: 70,
+                color: Colors.white,
+                alignment: Alignment.center,
+                child: _selectedShape == index
+                    ? Icon(Icons.check, color: Colors.black, size: 35)
+                    : null,
+              ),
+            ),
+          );
+        },
       ),
-    
+    ),
   );
 }
-
-Shape _getShape(String shapeName) {
-    switch (shapeName) {
-      case 'star':
-        return StarShape(noOfPoints: 5);
-      case 'circle':
-        return CircleShape();
-      case 'polygon':
-        return PolygonShape(numberOfSides: 8);
-      default:
-        return RoundRectShape(borderRadius: BorderRadius.circular(0));
-    }
-  } 
 
 
   //Widget for choosing or taking photo
@@ -585,4 +604,25 @@ Shape _getShape(String shapeName) {
       ],
     );
   }
+
+  Color _convertColor(String colorString) {
+  // Remove 'Color(' prefix and ')' suffix if present
+  if (colorString.startsWith('Color(')) {
+    colorString = colorString.substring(6, colorString.length - 1);
+  }
+
+  // Remove any '#' characters
+  colorString = colorString.replaceAll('#', '');
+
+  // Ensure the string starts with '0x' or '0xFF'
+  if (!colorString.startsWith('0x')) {
+    colorString = '0xFF' + colorString;
+  } else if (colorString.length == 8) {
+    colorString = '0xFF' + colorString.substring(2);
+  }
+
+  // Parse the color string to an integer and return Color object
+  //return Color(int.parse(colorString));
+  return Color(int.parse(colorString));
+}
 }

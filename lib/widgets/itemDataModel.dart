@@ -1,19 +1,19 @@
 import 'package:shape_of_view_null_safe/shape_of_view_null_safe.dart';
 
 class Item{
-  final String name;
-  final String category;
-  final String soldBy;
-  final String design;
-  final String price;
-  final String cost;
-  final String sku;
-  final String barcode;
-  final bool trackStock;
-  final String stock;
-  final String color;
-  final Shape shape;
-  final String? imagePath;
+   final String name;
+   final String category;
+   final String soldBy;
+   final String design;
+   final String price;
+   final String cost;
+   final String sku;
+   final String barcode;
+   final bool trackStock;
+   final String stock;
+   final String color;
+   final Shape shape;
+   final String? imagePath;
 
   Item({
     required this.name,

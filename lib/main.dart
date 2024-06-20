@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pos_system/const/categoryProvider.dart';
 import 'package:pos_system/const/itemProvider.dart';
 import 'package:pos_system/const/shiftController.dart';
 import 'package:pos_system/pages/OnBoardingPage.dart';
@@ -12,6 +13,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ItemProvider()),
+        ChangeNotifierProvider(create:(_)=>CategoryProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()), // Provide ThemeProvider
       ],
       child: const MyApp(),

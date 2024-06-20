@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pos_system/const/itemProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateItem.dart';
+import 'package:pos_system/pages/InsideItemPages/Edit_Item.dart';
 import 'package:pos_system/widgets/customDropDownMenu.dart';
 import 'package:pos_system/widgets/itemDataModel.dart';
 import 'package:provider/provider.dart';
@@ -197,15 +198,64 @@ class _SubItemsState extends State<SubItems> {
               ),
             ],
           ),
-          onTap: () {
+          onTap: () async {
             // handle edit method
+            final updatedItem = await 
+            Navigator.push(
+              context, 
+              MaterialPageRoute(
+                builder: (context)=>EditItem(item:item),
+              ),
+            );
+            if(updatedItem !=null ){
+              Provider.of<ItemProvider>(context,listen: false).updateItem(item, updatedItem);
+            }
           },
         );
       },
     );
   }
 
-  Color _convertColor(String colorString) {
+Color _convertColor(String colorString) {
+  // Remove 'Color(' prefix and ')' suffix if present
+  if (colorString.startsWith('Color(')) {
+    colorString = colorString.substring(6, colorString.length - 1);
+  }
+
+  // Remove any '#' characters
+  colorString = colorString.replaceAll('#', '');
+
+  // Ensure the string starts with '0x' or '0xFF'
+  if (!colorString.startsWith('0x')) {
+    colorString = '0xFF' + colorString;
+  } else if (colorString.length == 8) {
+    colorString = '0xFF' + colorString.substring(2);
+  }
+
+  // Parse the color string to an integer and return Color object
+  //return Color(int.parse(colorString));
+  return Color(int.parse(colorString));
+}
+
+
+
+  /* Color _convertColor(String colorString) {
+  // Remove 'Color(' prefix and ')' suffix
+  if (colorString.startsWith('Color(')) {
+    colorString = colorString.substring(6, colorString.length - 1);
+  }
+
+  // Ensure the string starts with '0x' or '0xFF'
+  if (!colorString.startsWith('0x') && !colorString.startsWith('0xFF')) {
+    colorString = '0xFF' + colorString;
+  }
+
+  // Parse the color string to an integer and return Color object
+  return Color(int.parse(colorString));
+} */
+
+ 
+   /* Color _convertColor(String colorString) {
     // Remove 'Color(' prefix and ')' suffix
     if (colorString.startsWith('Color(')) {
       colorString = colorString.substring(6, colorString.length - 1);
@@ -217,5 +267,5 @@ class _SubItemsState extends State<SubItems> {
     }
 
     return Color(int.parse(colorString));
-  }
+  } */
 }

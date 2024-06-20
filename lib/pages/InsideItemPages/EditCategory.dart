@@ -1,43 +1,61 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pos_system/const/buttonStyle.dart';
+import 'package:pos_system/const/categoryProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/AssignItem.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateItem.dart';
 import 'package:pos_system/pages/InsideItemPages/SubCategoriesPage.dart';
+import 'package:pos_system/widgets/categoryDataModel.dart';
+import 'package:provider/provider.dart';
 
 class EditCategory extends StatefulWidget {
-  const EditCategory({super.key});
+  final DataCategory dataCategory;
+
+  EditCategory({Key? key, required this.dataCategory}):super(key: key);
 
   @override
   State<EditCategory> createState() => _EditCategoryState();
 }
 
 class _EditCategoryState extends State<EditCategory> {
- TextEditingController CtgyNameController = TextEditingController();
-  Color _selectedColor = Colors.grey.shade400;
+  late TextEditingController CtgyNameController;
+  late Color _selectedColor;
+
+  bool _validateName = false;
+
+  @override
+  void initState(){
+    CtgyNameController = TextEditingController(text: widget.dataCategory.name);
+    _selectedColor = _convertColor(widget.dataCategory.color);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.tertiary,
         title: Text('Edit category', style: heading3Regular.copyWith(color: Colors.white)),
         actions: [
           TextButton(
             onPressed: (){
-              //need to handle save function, havent done
-              
-                /* setState(() {
+              //need to handle save function
+                 setState(() {
                   _validateName = CtgyNameController.text.isEmpty;
                 });
                 
                 if(!_validateName) {
-                  Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (context)=>SubItems(),),
+                  DataCategory updatedCategory = DataCategory(
+                    name: CtgyNameController.text, 
+                    color: '#${_selectedColor.value.toRadixString(16).padLeft(8,'0')}',
                   );
-                } */
+                  final categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
+                  categoryProvider.updateCategory(widget.dataCategory, updatedCategory);
+                  Navigator.pop(context, updatedCategory);
+                } 
             }, 
             child: Text('SAVE', style: bodySregular.copyWith(color: Colors.white)),
           ),
@@ -60,7 +78,7 @@ class _EditCategoryState extends State<EditCategory> {
                       labelText: 'Category name',
                       labelStyle: heading4Regular,
                       contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
-                      //errorText: _validateName? 'This field cannot be blank' : null,
+                      errorText: _validateName? 'This field cannot be blank' : null,
                     ),
                   ),
               
@@ -224,4 +242,25 @@ class _EditCategoryState extends State<EditCategory> {
       ),
     );
   }
+
+  Color _convertColor(String colorString) {
+  // Remove 'Color(' prefix and ')' suffix if present
+  if (colorString.startsWith('Color(')) {
+    colorString = colorString.substring(6, colorString.length - 1);
+  }
+
+  // Remove any '#' characters
+  colorString = colorString.replaceAll('#', '');
+
+  // Ensure the string starts with '0x' or '0xFF'
+  if (!colorString.startsWith('0x')) {
+    colorString = '0xFF' + colorString;
+  } else if (colorString.length == 8) {
+    colorString = '0xFF' + colorString.substring(2);
+  }
+
+  // Parse the color string to an integer and return Color object
+  //return Color(int.parse(colorString));
+  return Color(int.parse(colorString));
+}
 }

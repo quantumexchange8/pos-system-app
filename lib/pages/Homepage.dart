@@ -13,7 +13,6 @@ import 'package:pos_system/pages/DrawerPages/Shift.dart';
 import 'package:pos_system/pages/DrawerPages/apps.dart';
 import 'package:pos_system/pages/DrawerPages/backOffice.dart';
 import 'package:pos_system/pages/DrawerPages/support.dart';
-import 'package:pos_system/pages/InsideItemPages/SubItemPage.dart';
 import 'package:pos_system/widgets/appDrawer.dart';
 import 'package:pos_system/widgets/itemDataModel.dart';
 import 'package:provider/provider.dart';
@@ -373,6 +372,7 @@ Widget _buildShiftOpenedContent(BuildContext context) {
 
 Widget _buildNoItemView(BuildContext context){
   return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Text('You have no items yet', style: heading4Regular),
       const SizedBox(height: 5),
@@ -464,16 +464,23 @@ Widget _buildItemsList(List<Item>items){
   }
 
  Color _convertColor(String colorString) {
-  // Remove 'Color(' prefix and ')' suffix
+  // Remove 'Color(' prefix and ')' suffix if present
   if (colorString.startsWith('Color(')) {
     colorString = colorString.substring(6, colorString.length - 1);
   }
 
-  // Ensure the string starts with '0xff'
-  if (!colorString.startsWith('0xff')) {
-    colorString = '0xff' + colorString;
+  // Remove any '#' characters
+  colorString = colorString.replaceAll('#', '');
+
+  // Ensure the string starts with '0x' or '0xFF'
+  if (!colorString.startsWith('0x')) {
+    colorString = '0xFF' + colorString;
+  } else if (colorString.length == 8) {
+    colorString = '0xFF' + colorString.substring(2);
   }
 
+  // Parse the color string to an integer and return Color object
+  //return Color(int.parse(colorString));
   return Color(int.parse(colorString));
 }
 
