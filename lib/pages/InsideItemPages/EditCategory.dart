@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pos_system/const/buttonStyle.dart';
-import 'package:pos_system/const/categoryProvider.dart';
+import 'package:pos_system/const/controller/categoryProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/AssignItem.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateItem.dart';
 import 'package:pos_system/pages/InsideItemPages/SubCategoriesPage.dart';
-import 'package:pos_system/widgets/categoryDataModel.dart';
+import 'package:pos_system/widgets/dataModel/categoryDataModel.dart';
 import 'package:provider/provider.dart';
 
 class EditCategory extends StatefulWidget {
@@ -166,15 +166,11 @@ class _EditCategoryState extends State<EditCategory> {
                           ),
                           TextButton(
                             onPressed: (){
-      
-                              //delete Item function
-      
-                              Navigator.push(
-                                context, 
-                                MaterialPageRoute(
-                                  builder: (context)=> SubCategories(),
-                                ),
-                              );
+                              //delete function
+                              final categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
+                              categoryProvider.removeCategory(widget.dataCategory);
+                              Navigator.pop(context);
+                              Navigator.pop(context); 
                             }, 
                             child: const Text('DELETE'),
                           ),

@@ -1,8 +1,11 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pos_system/const/controller/discountProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/SubDiscountsPage.dart';
+import 'package:pos_system/widgets/dataModel/discountDataModel.dart';
+import 'package:provider/provider.dart';
 
 enum Discounts{percentage, sigma}
 
@@ -12,18 +15,26 @@ List<(Discounts, String)> discountOptions = <(Discounts, String)>[
 ];
 
 class EditDiscounts extends StatefulWidget {
-  const EditDiscounts({super.key});
+  final DiscountData discountData;
+  const EditDiscounts({super.key, required this.discountData});
 
   @override
   State<EditDiscounts> createState() => _EditDiscountsState();
 }
 
 class _EditDiscountsState extends State<EditDiscounts> {
-  TextEditingController discountNameController = TextEditingController();
-  TextEditingController valueController = TextEditingController();
- 
+  late TextEditingController discountNameController;
+  late TextEditingController valueController;
+  bool _validateName = false;
   List<bool>isSelected = [false,false];
   Discounts? selectedDiscount;
+
+  @override
+  void initState(){
+    discountNameController = TextEditingController(text: widget.discountData.name);
+    valueController = TextEditingController(text: widget.discountData.discount);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +46,19 @@ class _EditDiscountsState extends State<EditDiscounts> {
         actions: [
           TextButton(
             onPressed: (){
-              //need to handle save function, havent done
-            
+              //need to handle save function
+              setState(() {
+                _validateName = discountNameController.text.isEmpty;
+              });
+              if(!_validateName){
+                DiscountData updatedDiscount = DiscountData(
+                  discount: valueController.text,
+                  name: discountNameController.text, 
+                );
+                final discountProvider = Provider.of<DiscountProvider>(context, listen: false);
+                discountProvider.updateDiscount(widget.discountData, updatedDiscount);
+                Navigator.pop(context, updatedDiscount);
+              }
             }, 
             child: Text('SAVE', style: bodySregular.copyWith(color: Colors.white)),
           ),
@@ -57,7 +79,7 @@ class _EditDiscountsState extends State<EditDiscounts> {
                       labelText: 'Name',
                       labelStyle: heading4Regular,
                       contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
-                      //errorText: _validateName? 'This field cannot be blank' : null,
+                      errorText: _validateName? 'This field cannot be blank' : null,
                     ),
                   ),
 
@@ -90,7 +112,7 @@ class _EditDiscountsState extends State<EditDiscounts> {
                             contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
                             helperText: 'Leave the field blank to indicate the value upon sale',
                             helperStyle: bodyXSregular.copyWith(color: Colors.grey.shade700, fontSize: 8.5),
-                            //errorText: _validateName? 'This field cannot be blank' : null,
+                            
                           ),
                           onChanged: (value){
                             if(selectedDiscount == Discounts.percentage){
@@ -168,15 +190,12 @@ class _EditDiscountsState extends State<EditDiscounts> {
                           ),
                           TextButton(
                             onPressed: (){
-
-                              //delete Item function
-
-                              Navigator.push(
-                                context, 
-                                MaterialPageRoute(
-                                  builder: (context)=> SubDiscounts(),
-                                ),
-                              );
+                              //delete function
+                              final discountProvider = Provider.of<DiscountProvider>(context,listen: false);
+                              discountProvider.removeDiscount(widget.discountData);
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              
                             }, 
                             child: const Text('DELETE'),
                           ),

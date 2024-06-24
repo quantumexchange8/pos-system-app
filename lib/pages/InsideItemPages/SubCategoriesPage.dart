@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pos_system/const/categoryProvider.dart';
+import 'package:pos_system/const/controller/categoryProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateCategory.dart';
 import 'package:pos_system/pages/InsideItemPages/EditCategory.dart';
-import 'package:pos_system/widgets/categoryDataModel.dart';
+import 'package:pos_system/widgets/dataModel/categoryDataModel.dart';
 import 'package:provider/provider.dart';
 
 class SubCategories extends StatefulWidget {
@@ -81,7 +81,7 @@ class _SubCategoriesState extends State<SubCategories> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
-      body: dataCategory.isEmpty? _buildDefaultView():_buildCategoryList(categoryProvider.categories),
+      body: dataCategory.isEmpty? _buildDefaultView():_buildCategoryList(categoryProvider.categories, categoryProvider),
     );
   }
 
@@ -118,58 +118,74 @@ Widget _buildDefaultView(){
 }
 
 
-Widget _buildCategoryList(List<DataCategory> dataCategory){
+Widget _buildCategoryList(List<DataCategory> dataCategory, CategoryProvider categoryProvider){
   return ListView.builder(
     itemCount: dataCategory.length,
     itemBuilder: (context, index){
       final dCategory = dataCategory[index];
 
-    return ListTile(
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: _convertColor(dCategory.color),
-                  shape: BoxShape.circle,
-                ),   
-              ),
-              const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(dCategory.name, style: bodySregular),
-                  Text('0 items', style: bodyXSregular),
-                ],
-              )
-            ],
-          ),
-
-          Divider(
-            height: 30,
-            color: Colors.grey.shade300, 
-            thickness: 1, 
-            indent: 40, 
-            endIndent: 0,
-          ),
-        ],
+    return Dismissible(
+      key: Key(dCategory.name),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        padding: const EdgeInsets.only(right: 15),
+        color: Colors.red.shade500,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Icon(Icons.delete, color: Colors.white),
+          ],
+        ),
       ),
-      onTap: () async {
-        final updatedCategory = await
-        Navigator.push(
-          context, 
-          MaterialPageRoute(
-            builder: (context)=>EditCategory(dataCategory:dCategory),
-          ),
-        );
-        if(updatedCategory!=null){
-          Provider.of<CategoryProvider>(context,listen: false).updateCategory(dCategory, updatedCategory);
-        }
+      onDismissed: (direction) {
+        categoryProvider.removeCategory(dCategory);
       },
+      child: ListTile(
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: _convertColor(dCategory.color),
+                    shape: BoxShape.circle,
+                  ),   
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(dCategory.name, style: bodySregular),
+                    Text('0 items', style: bodyXSregular),
+                  ],
+                )
+              ],
+            ),
+      
+            Divider(
+              color: Colors.grey.shade300, 
+              thickness: 1, 
+              indent: 40, 
+              endIndent: 0,
+            ),
+          ],
+        ),
+        onTap: () async {
+          final updatedCategory = await
+          Navigator.push(
+            context, 
+            MaterialPageRoute(
+              builder: (context)=>EditCategory(dataCategory:dCategory),
+            ),
+          );
+          if(updatedCategory!=null){
+            Provider.of<CategoryProvider>(context,listen: false).updateCategory(dCategory, updatedCategory);
+          }
+        },
+      ),
     );
     },
   );

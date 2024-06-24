@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pos_system/widgets/categoryDataModel.dart';
+import 'package:pos_system/widgets/dataModel/categoryDataModel.dart';
 
 class CategoryProvider with ChangeNotifier{
   List <DataCategory> _categories = [];

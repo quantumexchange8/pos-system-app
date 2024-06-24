@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pos_system/const/buttonStyle.dart';
 import 'package:pos_system/const/constant.dart';
-import 'package:pos_system/const/shiftController.dart';
+import 'package:pos_system/const/controller/shiftController.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/DrawerPages/Items.dart';
 import 'package:pos_system/pages/DrawerPages/Receipts.dart';

@@ -167,7 +167,7 @@ class _SettingsState extends State<Settings> {
     Widget _ItemsListOnTap(IconData icon, String title, VoidCallback onTap){
       return Column(
         children: [
-           SizedBox(
+          SizedBox(
             height: 40,
             child: ListTile(
               onTap: onTap,
@@ -188,7 +188,6 @@ class _SettingsState extends State<Settings> {
           ), */
           
           Divider(
-            //height: 30,
             color: Colors.grey.shade300, 
             thickness: 1, 
             indent: 40, 

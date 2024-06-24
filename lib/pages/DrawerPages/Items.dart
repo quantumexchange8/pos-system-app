@@ -109,7 +109,7 @@ class _ItemsState extends State<Items> {
 
 
       body: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.symmetric(horizontal: 15.0),
         child: Column(
           children: [
             _ItemsListOnTap(
@@ -142,19 +142,17 @@ class _ItemsState extends State<Items> {
 Widget _ItemsListOnTap(IconData icon, String title, VoidCallback onTap){
   return Column(
           children: [
-            GestureDetector(
+            SizedBox(
+            height: 40,
+            child: ListTile(
               onTap: onTap,
-              child: Row(
-                children: [
-                  Icon(icon, size: 20),
-                  const SizedBox(width: 20),
-                  Text(title, style: bodySregular),
-                ],
-              ),
+              leading: Icon(icon, size: 20),
+              title: Text(title, style: bodySregular),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 1),
             ),
-            
+          ),
+           
             Divider(
-              height: 30,
               color: Colors.grey.shade300, 
               thickness: 1, 
               indent: 40, 

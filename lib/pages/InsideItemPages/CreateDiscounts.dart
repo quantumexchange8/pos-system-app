@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pos_system/const/textStyle.dart';
-import 'package:pos_system/widgets/discountDataModel.dart';
+import 'package:pos_system/widgets/dataModel/discountDataModel.dart';
 
 enum Discounts{percentage, sigma}
 

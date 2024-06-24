@@ -31,6 +31,12 @@ final heading4Regular = TextStyle(
   fontFamily: GoogleFonts.poppins().fontFamily,
 );
 
+final bodyLbold = TextStyle(
+  fontSize: 25,
+  fontWeight: FontWeight.bold,
+  fontFamily: GoogleFonts.poppins().fontFamily,
+);
+
 final bodyMregular = TextStyle(
   fontSize: 20,
   fontWeight: FontWeight.normal,

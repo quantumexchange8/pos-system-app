@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:pos_system/const/textStyle.dart';
 
 class CompleteReceipt extends StatefulWidget {
-  const CompleteReceipt({super.key});
+  final Map<String, dynamic> transactionDetails;
+  const CompleteReceipt({super.key, required this.transactionDetails});
 
   @override
   State<CompleteReceipt> createState() => _CompleteReceiptState();
@@ -62,7 +63,7 @@ class _CompleteReceiptState extends State<CompleteReceipt> {
           Center(
             child: Column(
               children: [
-                Text('RMX', style: heading2Bold),
+                Text('RM${widget.transactionDetails['totalPrice'].toStringAsFixed(2)}', style: heading2Bold),
                 Text('Total', style: bodySregular),
               ],
             ),
@@ -71,6 +72,48 @@ class _CompleteReceiptState extends State<CompleteReceipt> {
           Text('Employee: XXXX', style: heading4Regular),
           Text('POS: XXX',style: heading4Regular),
           Divider(thickness: 1, color: Colors.grey.shade300),
+
+          Text('Item name'),
+          Text('Item quantity'),
+          Text('', style: bodySregular),
+          Divider(thickness: 1, color: Colors.grey.shade300),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Total', style: bodySregular),
+              Text('RM${widget.transactionDetails['totalPrice'].toStringAsFixed(2)}',style: bodySregular),
+            ],
+          ),
+
+          Divider(thickness: 1, color: Colors.grey.shade300),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Cash', style: bodySregular),
+              Text('RM${widget.transactionDetails['cashReceived'].toStringAsFixed(2)}'),
+            ],
+          ),
+
+          Divider(thickness: 1, color: Colors.grey.shade300),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Change', style: bodySregular),
+              Text('RM${widget.transactionDetails['change'].toStringAsFixed(2)}',style: bodySregular),
+            ],
+          ),
+
+          Divider(thickness: 1, color: Colors.grey.shade300),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('date time'),
+              Text('receipt no')
+            ],
+          ),
+
+          
         ],
       ),
     );

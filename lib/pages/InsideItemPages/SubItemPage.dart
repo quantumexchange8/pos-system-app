@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:pos_system/const/itemProvider.dart';
+import 'package:pos_system/const/controller/itemProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateItem.dart';
 import 'package:pos_system/pages/InsideItemPages/Edit_Item.dart';
 import 'package:pos_system/widgets/customDropDownMenu.dart';
-import 'package:pos_system/widgets/itemDataModel.dart';
+import 'package:pos_system/widgets/dataModel/itemDataModel.dart';
 import 'package:provider/provider.dart';
 import 'package:shape_of_view_null_safe/shape_of_view_null_safe.dart';
 
@@ -92,7 +92,7 @@ class _SubItemsState extends State<SubItems> {
           if (itemProvider.items.isEmpty) {
             return _buildDefaultView();
           } else {
-            return _buildItemsList(itemProvider.items);
+            return _buildItemsList(itemProvider.items, itemProvider);
           }
         },
       ),
@@ -136,81 +136,98 @@ class _SubItemsState extends State<SubItems> {
     );
   }
 
-  Widget _buildItemsList(List<Item> items) {
+  Widget _buildItemsList(List<Item> items, ItemProvider itemProvider) {
     return ListView.builder(
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
 
-        return ListTile(
-          title: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      if (item.imagePath != null)
-                        Image.file(
-                          File(item.imagePath!),
-                          width: 30,
-                          height: 30,
-                          fit: BoxFit.cover,
-                        )
-                      else
-                        ShapeOfView(
-                          shape: item.shape,
-                          child: Container(
+        return Dismissible(
+          key: Key(item.name),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            padding: const EdgeInsets.only(right: 15),
+            color: Colors.red.shade500,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Icon(Icons.delete, color: Colors.white),
+              ],
+            ),
+          ),
+          onDismissed: (direction) {
+            itemProvider.removeItem(item);
+          },
+          child: ListTile(
+            title: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        if (item.imagePath != null)
+                          Image.file(
+                            File(item.imagePath!),
                             width: 30,
                             height: 30,
-                            decoration: BoxDecoration(
-                              color: _convertColor(item.color),
+                            fit: BoxFit.cover,
+                          )
+                        else
+                          ShapeOfView(
+                            shape: item.shape,
+                            child: Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                color: _convertColor(item.color),
+                              ),
                             ),
                           ),
+                        const SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(item.name, style: bodySregular),
+                            Text(
+                              (item.stock.isEmpty || item.stock == '0')
+                                  ? '-'
+                                  : '${item.stock} in stock',
+                              style: bodyXSregular,
+                            ),
+                          ],
                         ),
-                      const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(item.name, style: bodySregular),
-                          Text(
-                            (item.stock.isEmpty || item.stock == '0')
-                                ? '-'
-                                : '${item.stock} in stock',
-                            style: bodyXSregular,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Text(
-                    item.price.isNotEmpty ? item.price : 'Variable',
-                    style: bodySregular,
-                  ),
-                ],
-              ),
-              Divider(
-                height: 30,
-                color: Colors.grey.shade300,
-                thickness: 1,
-                indent: 40,
-                endIndent: 0,
-              ),
-            ],
+                      ],
+                    ),
+                    Text(
+                      item.price.isNotEmpty ? item.price : 'Variable',
+                      style: bodySregular,
+                    ),
+                  ],
+                ),
+                Divider(
+                  //height: 30,
+                  color: Colors.grey.shade300,
+                  thickness: 1,
+                  indent: 40,
+                  endIndent: 0,
+                ),
+              ],
+            ),
+            onTap: () async {
+              // handle edit method
+              final updatedItem = await 
+              Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context)=>EditItem(item:item),
+                ),
+              );
+              if(updatedItem !=null ){
+                Provider.of<ItemProvider>(context,listen: false).updateItem(item, updatedItem);
+              }
+            },
           ),
-          onTap: () async {
-            // handle edit method
-            final updatedItem = await 
-            Navigator.push(
-              context, 
-              MaterialPageRoute(
-                builder: (context)=>EditItem(item:item),
-              ),
-            );
-            if(updatedItem !=null ){
-              Provider.of<ItemProvider>(context,listen: false).updateItem(item, updatedItem);
-            }
-          },
         );
       },
     );

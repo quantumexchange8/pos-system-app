@@ -5,7 +5,7 @@ import 'package:pos_system/const/buttonStyle.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/AssignItem.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateItem.dart';
-import 'package:pos_system/widgets/categoryDataModel.dart';
+import 'package:pos_system/widgets/dataModel/categoryDataModel.dart';
 
 class CreateCategory extends StatefulWidget {
   const CreateCategory({super.key});

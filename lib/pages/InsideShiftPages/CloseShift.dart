@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pos_system/const/buttonStyle.dart';
-import 'package:pos_system/const/shiftController.dart';
+import 'package:pos_system/const/controller/shiftController.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:provider/provider.dart';
 

@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pos_system/const/controller/discountProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateDiscounts.dart';
-import 'package:pos_system/widgets/discountDataModel.dart';
+import 'package:pos_system/pages/InsideItemPages/EditDiscounts.dart';
+import 'package:pos_system/widgets/dataModel/discountDataModel.dart';
+import 'package:provider/provider.dart';
 
 class SubDiscounts extends StatefulWidget {
   const SubDiscounts({super.key});
@@ -13,10 +16,13 @@ class SubDiscounts extends StatefulWidget {
 
 class _SubDiscountsState extends State<SubDiscounts> {
   bool isSearching = false;
-  List<DiscountData> discountData = [];
+  //List<DiscountData> discountData = [];
 
   @override
   Widget build(BuildContext context) {
+    final discountProvider = Provider.of<DiscountProvider>(context);
+    List<DiscountData> discountData = discountProvider.discounts;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -76,7 +82,7 @@ class _SubDiscountsState extends State<SubDiscounts> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
-      body:  discountData.isEmpty?_buildDefaultView(): _buildDiscountList(),
+      body:  discountData.isEmpty?_buildDefaultView(): _buildDiscountList(discountData, discountProvider),
     );
   }
 
@@ -111,45 +117,73 @@ class _SubDiscountsState extends State<SubDiscounts> {
       );
   }
 
-  Widget _buildDiscountList(){
+  Widget _buildDiscountList(List<DiscountData>discountData, DiscountProvider discountProvider){
     return ListView.builder(
       itemCount: discountData.length,
       itemBuilder: (context,index){
         final pdiscount = discountData[index];
 
-        return ListTile(
-          title: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.shade200,
+        return Dismissible(
+          key: Key(pdiscount.name),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            padding: const EdgeInsets.only(right: 15),
+            color: Colors.red.shade500,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Icon(Icons.delete, color: Colors.white),
+              ],
+            ),
+          ),
+          onDismissed: (direction) {
+            discountProvider.removeDiscount(pdiscount);
+          },
+          child: ListTile(
+            title: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey.shade200,
+                          ),
+                          child: Icon(Icons.sell_outlined, size: 20),
                         ),
-                        child: Icon(Icons.sell_outlined, size: 20),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(pdiscount.name, style: bodySregular),
-                    ],
-                  ),
-                  Text(pdiscount.discount),
-                ],
-              ),
-              Divider(
-                height: 5,
-                color: Colors.grey.shade300, 
-                thickness: 1, 
-                indent: 40, 
-                endIndent: 0,
-              ),
-
-            ],
+                        const SizedBox(width: 10),
+                        Text(pdiscount.name, style: bodySregular),
+                      ],
+                    ),
+                    Text(pdiscount.discount),
+                  ],
+                ),
+                Divider(
+                  height: 5,
+                  color: Colors.grey.shade300, 
+                  thickness: 1, 
+                  indent: 40, 
+                  endIndent: 0,
+                ),
+          
+              ],
+            ),
+            onTap: () async {
+              final updatedDiscount = await
+              Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context)=>EditDiscounts(discountData: pdiscount),),
+              );
+              if(updatedDiscount!=null){
+                Provider.of<DiscountProvider>(context,listen: false).updateDiscount(pdiscount, updatedDiscount);
+              }
+            },
           ),
         );
       }

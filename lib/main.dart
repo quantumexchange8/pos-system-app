@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pos_system/const/categoryProvider.dart';
-import 'package:pos_system/const/itemProvider.dart';
-import 'package:pos_system/const/shiftController.dart';
+import 'package:pos_system/const/controller/categoryProvider.dart';
+import 'package:pos_system/const/controller/discountProvider.dart';
+import 'package:pos_system/const/controller/draftReceiptProvider.dart';
+import 'package:pos_system/const/controller/itemProvider.dart';
+import 'package:pos_system/const/controller/shiftController.dart';
+import 'package:pos_system/const/controller/transactionProvider.dart';
 import 'package:pos_system/pages/OnBoardingPage.dart';
-import 'package:pos_system/receiptPrint/completeReceipt.dart';
 import 'package:pos_system/themes/theme.dart';
 import 'package:pos_system/themes/themes_provider.dart';
 import 'package:provider/provider.dart';
@@ -13,8 +15,11 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ItemProvider()),
-        ChangeNotifierProvider(create:(_)=>CategoryProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()), // Provide ThemeProvider
+        ChangeNotifierProvider(create:(_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => DraftTicketProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => DiscountProvider()),
+        ChangeNotifierProvider(create: (_) => TransactionProvider()), // Provide ThemeProvider
       ],
       child: const MyApp(),
     ),

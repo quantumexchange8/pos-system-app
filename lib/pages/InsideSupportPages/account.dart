@@ -85,6 +85,7 @@ class _AccountPageState extends State<AccountPage> {
                           TextButton(
                             onPressed: () {
                               // Handle the continue action
+                              //need firebase auth to delete user accounts
                             },
                             child: const Text('CONTINUE'),
                           ),

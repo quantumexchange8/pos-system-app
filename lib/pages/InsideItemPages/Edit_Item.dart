@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pos_system/const/constant.dart';
-import 'package:pos_system/const/itemProvider.dart';
+import 'package:pos_system/const/controller/itemProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateCategory.dart';
 import 'package:pos_system/pages/InsideItemPages/SubItemPage.dart';
-import 'package:pos_system/widgets/itemDataModel.dart';
+import 'package:pos_system/widgets/dataModel/itemDataModel.dart';
 import 'package:provider/provider.dart';
 import 'package:shape_of_view_null_safe/shape_of_view_null_safe.dart';
 
@@ -366,7 +366,7 @@ class _EditItemState extends State<EditItem> {
               ),
             ),
 //part 3
-                   Container(
+            Container(
               color: Colors.grey.shade200,
               height: 15,
             ),
@@ -457,15 +457,11 @@ class _EditItemState extends State<EditItem> {
                             ),
                             TextButton(
                               onPressed: (){
-
-                                //delete Item function
-
-                                Navigator.push(
-                                  context, 
-                                  MaterialPageRoute(
-                                    builder: (context)=> SubItems(),
-                                  ),
-                                );
+                                //delete function
+                                final itemProvider = Provider.of<ItemProvider>(context, listen: false);
+                                itemProvider.removeItem(widget.item);
+                                Navigator.pop(context);
+                                Navigator.pop(context);                               
                               }, 
                               child: const Text('DELETE'),
                             ),

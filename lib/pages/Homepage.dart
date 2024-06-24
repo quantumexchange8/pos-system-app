@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:pos_system/const/buttonStyle.dart';
 import 'package:pos_system/const/constant.dart';
-import 'package:pos_system/const/itemProvider.dart';
-import 'package:pos_system/const/shiftController.dart';
+import 'package:pos_system/const/controller/discountProvider.dart';
+import 'package:pos_system/const/controller/draftReceiptProvider.dart';
+import 'package:pos_system/const/controller/itemProvider.dart';
+import 'package:pos_system/const/controller/shiftController.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/DrawerPages/Items.dart';
 import 'package:pos_system/pages/DrawerPages/Receipts.dart';
@@ -13,8 +15,10 @@ import 'package:pos_system/pages/DrawerPages/Shift.dart';
 import 'package:pos_system/pages/DrawerPages/apps.dart';
 import 'package:pos_system/pages/DrawerPages/backOffice.dart';
 import 'package:pos_system/pages/DrawerPages/support.dart';
+import 'package:pos_system/Payment/TotalTicket.dart';
 import 'package:pos_system/widgets/appDrawer.dart';
-import 'package:pos_system/widgets/itemDataModel.dart';
+import 'package:pos_system/widgets/dataModel/discountDataModel.dart';
+import 'package:pos_system/widgets/dataModel/itemDataModel.dart';
 import 'package:provider/provider.dart';
 import 'package:shape_of_view_null_safe/shape_of_view_null_safe.dart';
 
@@ -112,7 +116,7 @@ class _HomePageState extends State<HomePage> {
       case "All items":
         return _AllItemsContent(isShiftOpen: isShiftOpen);
       case "Discounts":
-        return _DiscountsContent();
+        return _DiscountsContent(isShiftOpen: isShiftOpen);
       default:
         return Container();
     }
@@ -122,6 +126,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final shiftState = Provider.of<ShiftState>(context);
     //var shiftStatus = Provider.of<ShiftStatus>(context);
+    List<bool>isSelected = [true, false];
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -129,9 +134,16 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: primaryBlue.shade900,
         title: Row(
           children: [
-            Text('Ticket', style: bodyMregular.copyWith(color: Colors.white)),
-            const SizedBox(width: 10),
-            const Icon(Icons.receipt, color: Colors.white),
+            TextButton( 
+            onPressed: () { 
+              Navigator.push(context, 
+              MaterialPageRoute(builder: (context)=>DraftTicket(),),
+              );
+            }, 
+            child: Text('Ticket', style: bodyMregular.copyWith(color: Colors.white)),
+            ),
+            const Icon(Icons.receipt, color: Colors.white), 
+           
           ],
         ),
         actions: <Widget>[
@@ -172,6 +184,51 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   ToggleButtons(
+                    isSelected: isSelected,
+                      onPressed: (int index) {
+                        setState(() {
+                          isShiftOpen = index == 0; // Toggle the shift state
+                        });
+
+                        // Navigate to respective pages based on index
+                        if (index == 0) {
+                          /* Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SaveReceipt()),
+                          ); */
+                        } else {
+                          /* Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CheckoutPage(totalPrice:)),
+                          ); */
+                        }
+                      },
+                      color: Colors.white, // Default color
+                      selectedColor: Colors.white, // Color when selected
+                      fillColor: Colors.blue.shade600, // Background color when selected
+                      borderRadius: BorderRadius.circular(5),
+                      borderWidth: 2,
+                    children: [
+                      Container(
+                        width: 165,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isSelected[0] ?Colors.blue.shade800 : Colors.blue.shade900,
+                          ),
+                        child: Text('OPEN TICKETS', style: bodySregular),
+                        
+                      ),
+                      Container(
+                        width: 165,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isSelected[1] ?Colors.blue.shade800 : Colors.blue.shade900,
+                          ),
+                        child: Text('CHARGE \n RM0.00', style: bodySregular),
+                      ),
+                    ],
+                  ), 
+                  /* ToggleButtons(
                     isSelected: [true, false],
                     onPressed: (int index) {
                       setState(() {
@@ -189,6 +246,7 @@ class _HomePageState extends State<HomePage> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(color: primaryBlue.shade300),
                         child: Text('OPEN TICKETS', style: bodySregular),
+                        
                       ),
                       Container(
                         width: 165,
@@ -197,7 +255,7 @@ class _HomePageState extends State<HomePage> {
                         child: Text('CHARGE \n RM0.00', style: bodySregular),
                       ),
                     ],
-                  ),
+                  ), */
                 ],
               ),
             ),
@@ -292,7 +350,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          Expanded(
+          Expanded(//should add single child scroll
             child: Container(
               color: Theme.of(context).colorScheme.background,
               child: Consumer<ShiftState>(
@@ -323,6 +381,8 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+
+//FOR ALL ITEMS
 class _AllItemsContent extends StatelessWidget {
   final bool isShiftOpen;
 
@@ -452,9 +512,16 @@ Widget _buildItemsList(List<Item>items){
               ),
             ],
           ),
-          
+          selectedTileColor: Colors.grey.shade500,
+          tileColor: Colors.grey.shade400,
+          selectedColor: Colors.grey,
           onTap: (){
-            //handle edit method
+            //handle add method to the draft ticket
+            //bring name, price, click to add quantity
+             if (isShiftOpen) {
+                Provider.of<DraftTicketProvider>(context, listen: false).addItem(item);
+              }
+              
           },
           
 
@@ -484,32 +551,96 @@ Widget _buildItemsList(List<Item>items){
   return Color(int.parse(colorString));
 }
 
+
+//FOR DISCOUNT PART
 class _DiscountsContent extends StatelessWidget {
+  final bool isShiftOpen;
+  const _DiscountsContent({required this.isShiftOpen});
+
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('You have no discounts yet', style: heading4Regular),
-          const SizedBox(height: 5),
-          Text('Go to items menu to add a discount', style: bodySregular),
-          const SizedBox(height: 15),
-          BlueButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const Items(),
-                ),
-              );
-            },
-            text: 'GO TO ITEMS',
-          ),
-        ],
-      ),
+      child: isShiftOpen? _buildShiftOpenForDiscount(context):_buildShiftClosedContent(context),
     );
   }
+}
+
+Widget _buildShiftOpenForDiscount(BuildContext context){
+  final discountProvider = Provider.of<DiscountProvider>(context);
+  if(discountProvider.discounts.isEmpty){
+    return _buildNoDiscountView(context);
+  }else{
+    return _buildDiscountList(discountProvider.discounts);
+  }
+}
+
+Widget _buildNoDiscountView(BuildContext context){
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text('You have no discounts yet', style: heading4Regular),
+      const SizedBox(height: 5),
+      Text('Go to items menu to add a discount', style: bodySregular),
+      const SizedBox(height: 15),
+      BlueButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Items(),
+            ),
+          );
+        },
+        text: 'GO TO ITEMS',
+      ),
+    ],
+  );
+}
+
+Widget _buildDiscountList(List<DiscountData>discounts){
+  return ListView.builder(
+    itemCount: discounts.length,
+    itemBuilder: (context, index){
+      final discount = discounts[index];
+
+      return ListTile(
+        title: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.shade200,
+                        ),
+                        child: Icon(Icons.sell_outlined, size: 20),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(discount.name, style: bodySregular),
+                    ],
+                  ),
+                  Text(discount.discount),
+                ],
+              ),
+              Divider(
+                height: 5,
+                color: Colors.grey.shade300, 
+                thickness: 1, 
+                indent: 40, 
+                endIndent: 0,
+              ),
+
+            ],
+          ),
+          onTap: (){},
+      );
+    }
+  );
 }
 
 class _SearchContent extends StatelessWidget {

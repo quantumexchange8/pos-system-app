@@ -9,7 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pos_system/const/constant.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideItemPages/CreateCategory.dart';
-import 'package:pos_system/widgets/itemDataModel.dart';
+import 'package:pos_system/widgets/dataModel/itemDataModel.dart';
 import 'package:shape_of_view_null_safe/shape_of_view_null_safe.dart';
 
 enum soldBy {Each, Weight}
