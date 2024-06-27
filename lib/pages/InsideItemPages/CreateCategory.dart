@@ -29,7 +29,7 @@ class _CreateCategoryState extends State<CreateCategory> {
         actions: [
           TextButton(
             onPressed: (){
-              //need to handle save function, havent done
+              //need to handle save function
               
                  setState(() {
                   _validateName = CtgyNameController.text.isEmpty;

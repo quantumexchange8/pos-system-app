@@ -2,11 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:pos_system/const/buttonStyle.dart';
 import 'package:pos_system/const/constant.dart';
+import 'package:pos_system/const/controller/draftReceiptProvider.dart';
 import 'package:pos_system/const/controller/transactionProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/Homepage.dart';
+import 'package:pos_system/widgets/dataModel/transactionModel.dart';
 import 'package:provider/provider.dart';
 
 class CashPayment extends StatefulWidget {
@@ -21,10 +24,23 @@ class CashPayment extends StatefulWidget {
 class _CashPaymentState extends State<CashPayment> {
   TextEditingController emailController = TextEditingController();
   
+  
+  String getCurrentDateTime(){
+      final now = DateTime.now();
+      final formatter= DateFormat('HH:mm');
+      return formatter.format(now);
+    }
 
   @override
   Widget build(BuildContext context) {
     double change = widget.cashReceived - widget.totalPrice;
+    final draftReceiptProvider = Provider.of<DraftTicketProvider>(context);
+    //final completeTicketProvider = Provider.of<CompleteTicketProvider>(context);
+    double totalPrice = 0;
+    for (var item in draftReceiptProvider.items){
+      final itemPrice = double.parse(item.price.replaceFirst('RM', ''));
+      totalPrice += itemPrice * item.quantity;
+    } 
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -86,14 +102,27 @@ class _CashPaymentState extends State<CashPayment> {
                   child: BlueButton(
                     onPressed: (){
                       //save details
-                      final transactionDetails = {
+                       /* final transactionDetails = {
                         'cashReceived': widget.cashReceived,
                         'totalPrice':widget.totalPrice,
                         'change':change,
-                      };
+                        'dateTime':getCurrentDateTime(),
+                      };  */
 
-                      Provider.of<TransactionProvider>(context, listen: false).addTransaction(transactionDetails);
+                       final transactionDetails = Transaction(
+                        dateTime: DateTime.now(), 
+                        cashReceived: widget.cashReceived, 
+                        totalPrice: widget.totalPrice, 
+                        change: change, 
+                        list: List.from(draftReceiptProvider.items),//draftReceiptProvider.items,
+                        isCashPayment: true,
+                      ); 
 
+                       Provider.of<TransactionProvider>(context, listen: false).addTransaction(transactionDetails);
+                      /*for(var item in draftReceiptProvider.items){
+                        completeTicketProvider.addItem(item);
+                      } */
+                      draftReceiptProvider.clearItem();
 
                       Navigator.push(context, 
                         MaterialPageRoute(builder: (context)=>HomePage(),),

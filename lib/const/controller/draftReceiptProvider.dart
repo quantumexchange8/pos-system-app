@@ -6,12 +6,13 @@ class DraftTicketProvider with ChangeNotifier{
   List<DraftReceipt> _items = [];
   List<DraftReceipt> get items => _items;
 
-  void addItem(Item item){
+   /* void addItem(Item item){
     var existingItem = _items.firstWhere(
       (draftItem) => draftItem.name == item.name,
       orElse: ()=> DraftReceipt(
         name: item.name, 
-        price: item.price),
+        price: item.price
+        ),
     );
 
     if(_items.contains(existingItem)){
@@ -20,10 +21,36 @@ class DraftTicketProvider with ChangeNotifier{
       _items.add(existingItem);
     }
     notifyListeners();
-  }
+  }  */
+
+   void addItem(Item item){
+    var existingItem = _items.firstWhere(
+      (draftItem) => draftItem.name == item.name,
+      orElse: () => DraftReceipt(
+        name: item.name, 
+        price: item.price,
+        quantity: 1,
+      ),
+    );
+
+    if(_items.contains(existingItem)){
+      existingItem.quantity += 1;
+    }else{
+      //existingItem.quantity += item.quantity;
+      _items.add(existingItem);
+    }
+    notifyListeners();
+  } 
 
   void removeItem(DraftReceipt draftReceipt){
     _items.remove(draftReceipt);
     notifyListeners();
   }
+
+  void clearItem(){
+    _items.clear();
+    notifyListeners();
+  }
+
+
 }

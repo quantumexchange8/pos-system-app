@@ -3,6 +3,7 @@ import 'package:pos_system/const/controller/categoryProvider.dart';
 import 'package:pos_system/const/controller/discountProvider.dart';
 import 'package:pos_system/const/controller/draftReceiptProvider.dart';
 import 'package:pos_system/const/controller/itemProvider.dart';
+import 'package:pos_system/const/controller/printerProvider.dart';
 import 'package:pos_system/const/controller/shiftController.dart';
 import 'package:pos_system/const/controller/transactionProvider.dart';
 import 'package:pos_system/pages/OnBoardingPage.dart';
@@ -17,9 +18,11 @@ void main() {
         ChangeNotifierProvider(create: (_) => ItemProvider()),
         ChangeNotifierProvider(create:(_) => CategoryProvider()),
         ChangeNotifierProvider(create: (_) => DraftTicketProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),// Provide ThemeProvider
         ChangeNotifierProvider(create: (_) => DiscountProvider()),
-        ChangeNotifierProvider(create: (_) => TransactionProvider()), // Provide ThemeProvider
+        ChangeNotifierProvider(create: (_) => TransactionProvider()),
+        ChangeNotifierProvider(create: (_) => PrinterProvider()), 
+        
       ],
       child: const MyApp(),
     ),

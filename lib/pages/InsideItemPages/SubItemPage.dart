@@ -140,7 +140,7 @@ class _SubItemsState extends State<SubItems> {
     return ListView.builder(
       itemCount: items.length,
       itemBuilder: (context, index) {
-        final item = items[index];
+        final item = items.reversed.toList()[index];
 
         return Dismissible(
           key: Key(item.name),

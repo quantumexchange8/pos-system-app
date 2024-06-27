@@ -51,6 +51,7 @@ dependencies:
   image_picker: ^0.8.4+6
   permission_handler: ^10.0.0
   shared_preferences: ^2.2.3
+  bluetooth_print: ^4.3.0
   
   
   

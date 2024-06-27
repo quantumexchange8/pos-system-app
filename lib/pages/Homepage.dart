@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:pos_system/Payment/checkoutPage.dart';
 import 'package:pos_system/const/buttonStyle.dart';
 import 'package:pos_system/const/constant.dart';
 import 'package:pos_system/const/controller/discountProvider.dart';
@@ -25,7 +26,8 @@ import 'package:shape_of_view_null_safe/shape_of_view_null_safe.dart';
 bool isShiftOpen = true;
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  //final double totalPrice;
+  const HomePage({super.key, });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -192,15 +194,15 @@ class _HomePageState extends State<HomePage> {
 
                         // Navigate to respective pages based on index
                         if (index == 0) {
-                          /* Navigator.push(
+                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => SaveReceipt()),
-                          ); */
+                            MaterialPageRoute(builder: (context) => DraftTicket()),
+                          ); 
                         } else {
-                          /* Navigator.push(
+                           /* Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => CheckoutPage(totalPrice:)),
-                          ); */
+                            MaterialPageRoute(builder: (context) => CheckoutPage(totalPrice: widget.totalPrice)),
+                          );  */
                         }
                       },
                       color: Colors.white, // Default color
@@ -224,7 +226,7 @@ class _HomePageState extends State<HomePage> {
                         decoration: BoxDecoration(
                           color: isSelected[1] ?Colors.blue.shade800 : Colors.blue.shade900,
                           ),
-                        child: Text('CHARGE \n RM0.00', style: bodySregular),
+                        child: Text('CHARGE \n ', style: bodySregular),
                       ),
                     ],
                   ), 
@@ -299,21 +301,24 @@ class _HomePageState extends State<HomePage> {
                           ),
                         )
                       : Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: DropdownButton<String>(
-                            value: dropdownValue,
-                            items: <String>["All items", "Discounts"]
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                dropdownValue = newValue!;
-                              });
-                            },
+                          //padding: const EdgeInsets.all(15.0),
+                          padding: EdgeInsets.only(left: 15, top: 15, right: 15, bottom: 13),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: dropdownValue,
+                              items: <String>["All items", "Discounts"]
+                                  .map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  dropdownValue = newValue!;
+                                });
+                              },
+                            ),
                           ),
                         ),
                 ),
@@ -458,7 +463,7 @@ Widget _buildItemsList(List<Item>items){
     return ListView.builder(
       itemCount: items.length,
       itemBuilder: (context, index){
-      final item = items[index];
+      final item = items.reversed.toList()[index];
       
       //Shape shape;
       //method to make user choose the shape 
@@ -601,7 +606,7 @@ Widget _buildDiscountList(List<DiscountData>discounts){
   return ListView.builder(
     itemCount: discounts.length,
     itemBuilder: (context, index){
-      final discount = discounts[index];
+      final discount = discounts.reversed.toList()[index];
 
       return ListTile(
         title: Column(
@@ -637,7 +642,9 @@ Widget _buildDiscountList(List<DiscountData>discounts){
 
             ],
           ),
-          onTap: (){},
+          onTap: (){
+            //add into the total ticket page
+          },
       );
     }
   );

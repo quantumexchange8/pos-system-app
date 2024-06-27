@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:pos_system/const/constant.dart';
 import 'package:pos_system/const/controller/draftReceiptProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/Payment/checkoutPage.dart';
 import 'package:pos_system/Payment/saveReceipt.dart';
+import 'package:pos_system/widgets/dataModel/transactionModel.dart';
 import 'package:provider/provider.dart';
 
 bool isShiftOpen = true;
@@ -44,6 +46,12 @@ class _DraftTicketState extends State<DraftTicket> {
       totalPrice += itemPrice * item.quantity;
     }
     List<bool>isSelected = [true, false];
+
+    String getCurrentDateTime(){
+      final now = DateTime.now();
+      final formatter= DateFormat('HH:mm');
+      return formatter.format(now);
+    }
 
 
     return Scaffold(
@@ -93,7 +101,7 @@ class _DraftTicketState extends State<DraftTicket> {
                 //final draftreceipt = draftReceiptProvider.items[index];
                 final item = draftReceiptProvider.items[index];
                 final itemPrice = double.parse(item.price.replaceFirst('RM', ''));
-                final totalPrice = (itemPrice * item.quantity).toStringAsFixed(2);
+                final itemTotalPrice = (itemPrice * item.quantity).toStringAsFixed(2);
             
             
                 return Dismissible(
@@ -117,7 +125,7 @@ class _DraftTicketState extends State<DraftTicket> {
                       ListTile(
                         title: Text(item.name, style: heading4Regular),
                         subtitle: Text('x ${item.quantity}', style: bodySregular),
-                        trailing: Text('RM$totalPrice', style: heading4Regular),
+                        trailing: Text('RM$itemTotalPrice', style: heading4Regular),
                       ),
                       
                       if (index < draftReceiptProvider.items.length - 0)
@@ -138,15 +146,15 @@ class _DraftTicketState extends State<DraftTicket> {
               child: Column(
                 children: [
                 Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Total', style: heading4Regular),
-                  Text('RM${totalPrice.toStringAsFixed(2)}', style: heading3Bold),
-                ],
-              ),
-            ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Total', style: heading4Regular),
+                      Text('RM${totalPrice.toStringAsFixed(2)}', style: heading3Bold),
+                    ],
+                  ),
+                ),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -157,12 +165,45 @@ class _DraftTicketState extends State<DraftTicket> {
                         setState(() {
                           isShiftOpen = index == 0; // Toggle the shift state
                         });
+
+                    // Create transaction details map
+                   /*  final transactionDetails = {
+                      'dateTime': DateTime.now(),
+                      'cashReceived': 0.0,
+                      'totalPrice': totalPrice,
+                      'change': 0.0,
+                      
+                    };
+ */
+                       // Create transaction details map
+                      /* final transactionDetails = {
+                        'dateTime': null,
+                        'cashReceived': 0.0,
+                        'totalPrice': totalPrice,
+                        'change' : 0.0,
+                        //'items': draftReceiptProvider.items,
+                        /* 'itemName': transaction.name,
+                        'itemQuantity': item.quantity,
+                        'itemPrice': item.price, 
+                        'itemTotalPrice': itemTotalPrice,  */
+                      };  */
+
+                      final transactionDetails = Transaction(
+                        dateTime: DateTime.now(), 
+                        cashReceived: 0.00, 
+                        totalPrice: totalPrice, 
+                        change: 0.00, 
+                        list: draftReceiptProvider.items, 
+                        isCashPayment: null,
+                      );
+                    
+                        
                           
                         // Navigate to respective pages based on index
                         if (index == 0) {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => SaveReceipt()),
+                            MaterialPageRoute(builder: (context) => SaveReceipt(),),
                           );
                         } else {
                           Navigator.push(

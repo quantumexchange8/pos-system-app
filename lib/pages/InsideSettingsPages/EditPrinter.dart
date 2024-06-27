@@ -1,20 +1,32 @@
+import 'package:bluetooth_print/bluetooth_print.dart';
+import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pos_system/const/buttonStyle.dart';
 import 'package:pos_system/const/constant.dart';
+import 'package:pos_system/const/controller/printerProvider.dart';
 import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/pages/InsideSettingsPages/printers.dart';
+import 'package:pos_system/widgets/dataModel/printerDataModel.dart';
+import 'package:provider/provider.dart';
 
 class EditPrinter extends StatefulWidget {
-  const EditPrinter({super.key});
+  final DataPrinter dataPrinter;
+  const EditPrinter({super.key, required this.dataPrinter});
 
   @override
   State<EditPrinter> createState() => _EditPrinterState();
 }
 
 class _EditPrinterState extends State<EditPrinter> {
-  TextEditingController printerNameController = TextEditingController();
-  String dropdownValue = "No printer";
+  late TextEditingController printerNameController;
+  BluetoothDevice? dropdownValue;
+  List<BluetoothDevice> _devices = [];
+
+  String _deviceMsg = "";
+  BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
+  //late String dropdownValue;
 
   final Map<String, bool> _switchStates = {
     'Print receipt and bills':false,
@@ -22,6 +34,62 @@ class _EditPrinterState extends State<EditPrinter> {
     'Automatically print receipt': false,
     'Print single item per order ticket' : false,
   };
+
+  @override
+  void initState(){
+    super.initState();
+    printerNameController = TextEditingController(text: widget.dataPrinter.name);
+    dropdownValue = widget.dataPrinter.device;
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await requestPermissions();
+      initPrinter();
+    });
+  }
+
+  Future<void> requestPermissions() async {
+    await Permission.bluetooth.request();
+    await Permission.bluetoothScan.request();
+    await Permission.bluetoothConnect.request();
+    await Permission.location.request();
+  }
+
+  Future<void> initPrinter() async {
+    try {
+      bool isOn = await bluetoothPrint.isOn;
+      if (!isOn) {
+        setState(() {
+          _deviceMsg = "Bluetooth is off.";
+        });
+        return;
+      }
+
+      bluetoothPrint.startScan(timeout: Duration(seconds: 2));
+    } catch (e) {
+      print('Error starting scan: $e');
+      setState(() {
+        _deviceMsg = "Error starting scan: $e";
+      });
+      return;
+    }
+
+    if (!mounted) return;
+    bluetoothPrint.scanResults.listen((val) {
+      if (!mounted) return;
+      setState(() => _devices = val);
+      if (_devices.isEmpty) {
+        setState(() {
+          _deviceMsg = "No Device";
+        });
+      }else{
+        if(dropdownValue !=null && !_devices.contains(dropdownValue)){
+          dropdownValue = _devices.first;
+        }
+      }
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +100,14 @@ class _EditPrinterState extends State<EditPrinter> {
         actions: [
           TextButton(
             onPressed: (){
-              //need to handle save function, havent done
+              //need to handle save function
+              DataPrinter updatedPrinter = DataPrinter(
+                name: printerNameController.text,
+                device: dropdownValue, //pass the updated BluetoothDevice
+              );
+              /* final printerProvider = Provider.of<PrinterProvider>(context, listen: false);
+              printerProvider.updatePrinter(widget.dataPrinter, updatedPrinter); */
+              Navigator.pop(context, updatedPrinter);
             
             }, 
             child: Text('SAVE', style: bodySregular.copyWith(color: Colors.white)),
@@ -62,26 +137,30 @@ class _EditPrinterState extends State<EditPrinter> {
                   Row(
                     children: [
                       Expanded(
-                        child: DropdownButtonFormField<String>(
+                        child: DropdownButtonFormField<BluetoothDevice?>(
                           value: dropdownValue,
                           style: bodySregular.copyWith(color: Theme.of(context).colorScheme.secondary),
-                          items: <String>["No printer"]
-                          .map<DropdownMenuItem<String>>((String value){
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                              );
-                          }).toList(), 
+                          items: _devices.map((BluetoothDevice device) {
+                                    return DropdownMenuItem<BluetoothDevice?>(
+                                      value: device,
+                                      child: Text(device.name ?? "Unknown device"),
+                                    );
+                                  }).toList(),
+                          onChanged: (BluetoothDevice? newValue) {
+                                        setState(() {
+                                          dropdownValue = newValue;
+                                        });
+                                      },
                           decoration: InputDecoration(
                             labelText: 'Printer model',
                             labelStyle: heading4Regular,
                             contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
                           ),
-                          onChanged: (String? newValue){
+                          /* onChanged: (BluetoothDevice? newValue) {
                             setState(() {
-                              dropdownValue = newValue!;
+                              dropdownValue = newValue;
                             });
-                          },
+                          }, */
                         ),
                       ),
                     ],
@@ -208,14 +287,17 @@ class _EditPrinterState extends State<EditPrinter> {
               if( _switchStates['Print orders']?? true)
               Divider(thickness: 1, color: Colors.grey.shade300),
         
-              Row(
-                children: [
-                  Expanded(
-                    child: BlueIconButton(
-                      onPressed: (){}, 
-                      text: 'PRINT TEST', icon: Icons.print),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: BlueIconButton(
+                        onPressed: (){}, 
+                        text: 'PRINT TEST', icon: Icons.print),
+                    ),
+                  ],
+                ),
               ),
               
             const SizedBox(height: 15),
@@ -309,15 +391,10 @@ class _EditPrinterState extends State<EditPrinter> {
                           ),
                           TextButton(
                             onPressed: (){
-
-                              //delete Item function
-
-                              Navigator.push(
-                                context, 
-                                MaterialPageRoute(
-                                  builder: (context)=> PrintersPage(),
-                                ),
-                              );
+                              final printerProvider = Provider.of<PrinterProvider>(context, listen: false);
+                              printerProvider.removePrinter(widget.dataPrinter);
+                              Navigator.pop(context);
+                              Navigator.pop(context);
                             }, 
                             child: const Text('DELETE'),
                           ),

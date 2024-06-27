@@ -25,23 +25,5 @@ class ItemProvider with ChangeNotifier{
     }
   }
 
-  /* void updateItem(String sku, Item updatedItem) {
-    // Find the index of the item to be updated
-    int index = _items.indexWhere((item) => item.sku == sku);
-
-    if (index != -1) {
-      // Replace the item at the found index with the updated item
-      _items[index] = updatedItem;
-      notifyListeners();
-    }
-  } */
-  /* void updateItem(Item item){
-    int index = _items.indexWhere((i) => i.name == item.name);
-    if(index !=-1){
-      _items[index] = item;
-      notifyListeners();
-    }
-  } */
-
-
+ 
 }
