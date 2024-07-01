@@ -1,5 +1,4 @@
-import 'package:bluetooth_print/bluetooth_print.dart';
-import 'package:bluetooth_print/bluetooth_print_model.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -32,42 +31,14 @@ class _CompleteReceiptState extends State<CompleteReceipt> {
     );
   }
 
-  /* BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
-  List<BluetoothDevice> _devices = [];
-  String _deviceMsg = ""; */
-
-  /* @override
-  void initState(){
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => {initPrinter()});
-  }
-
-  Future<void>initPrinter() async{
-    bluetoothPrint.startScan(timeout: Duration(seconds: 2));
-
-    if(!mounted)return;
-    bluetoothPrint.scanResults.listen(
-      (val) { 
-      if(!mounted)return;
-      setState(() => {_devices = val});
-      if(_devices.isEmpty) 
-        setState(() {
-         _deviceMsg = "No Device";
-        });
-    },);
-  } */
+  
   
   @override
   Widget build(BuildContext context) {
-    //final items = widget.transactionDetails['items'] as List<Map<String, dynamic>>?;
-    //final List<Map<String, dynamic>> items = widget.transactionDetails['items'];
-    //final transaction = widget.transactionDetails;
-    //final items = transaction.items;
-     
+    
     String getCurrentDateTime(){
-      final now = DateTime.now();
       final formatter= DateFormat('dd/MM/yyyy HH:mm');
-      return formatter.format(now);
+      return formatter.format(widget.transactionDetails.dateTime);
     }
 
     return Scaffold(

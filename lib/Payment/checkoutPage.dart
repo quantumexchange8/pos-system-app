@@ -9,6 +9,7 @@ import 'package:pos_system/const/textStyle.dart';
 
 class CheckoutPage extends StatefulWidget {
   final double totalPrice;
+  
   CheckoutPage({super.key, required this.totalPrice});
 
   @override

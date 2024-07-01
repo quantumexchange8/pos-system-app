@@ -37,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   bool isSearching = false;
   String dropdownValue = "All items";
+  double totalPrice = 0.0;
 
   void _onItemTapped(int index) {
     Navigator.pop(context);
@@ -199,10 +200,10 @@ class _HomePageState extends State<HomePage> {
                             MaterialPageRoute(builder: (context) => DraftTicket()),
                           ); 
                         } else {
-                           /* Navigator.push(
+                            Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => CheckoutPage(totalPrice: widget.totalPrice)),
-                          );  */
+                            MaterialPageRoute(builder: (context) => CheckoutPage(totalPrice: totalPrice)),
+                          );  
                         }
                       },
                       color: Colors.white, // Default color
@@ -226,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                         decoration: BoxDecoration(
                           color: isSelected[1] ?Colors.blue.shade800 : Colors.blue.shade900,
                           ),
-                        child: Text('CHARGE \n ', style: bodySregular),
+                        child: Text('CHARGE \n RM${totalPrice.toStringAsFixed(2)}', style: bodySregular),
                       ),
                     ],
                   ), 

@@ -46,7 +46,7 @@ class _SettingsState extends State<Settings> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const Receipts(),
+              builder: (context) => Receipts(),
             ),
           );
           break;
@@ -116,9 +116,9 @@ class _SettingsState extends State<Settings> {
             children: [
               _ItemsListOnTap(
                 Icons.print, 'Printers',(){
-                  Navigator.push(context, 
+                  /* Navigator.push(context, 
                   MaterialPageRoute(builder: (context)=>PrintersPage(),
-                  ),);
+                  ),); */
                 },
               ),
               _ItemsListOnTap(

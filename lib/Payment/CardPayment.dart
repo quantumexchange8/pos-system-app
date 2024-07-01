@@ -20,11 +20,12 @@ class CardPayment extends StatefulWidget {
 
 class _CardPaymentState extends State<CardPayment> {
   TextEditingController emailController = TextEditingController();
+  DateTime transactionTime = DateTime.now();
 
     String getCurrentDateTime(){
-      final now = DateTime.now();
+      //final now = DateTime.now();
       final formatter= DateFormat('HH:mm');
-      return formatter.format(now);
+      return formatter.format(transactionTime);
     }
 
   @override
@@ -84,7 +85,7 @@ class _CardPaymentState extends State<CardPayment> {
                   child: BlueButton(
                     onPressed: (){
                       final transactionDetails = Transaction(
-                        dateTime: DateTime.now(), 
+                        dateTime: transactionTime, 
                         cashReceived: cashReceived, 
                         totalPrice: widget.totalPrice, 
                         change: change, 

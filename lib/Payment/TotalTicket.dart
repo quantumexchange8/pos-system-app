@@ -64,6 +64,12 @@ class _DraftTicketState extends State<DraftTicket> {
             const Icon(Icons.receipt, color: Colors.white),
           ],
         ),
+        leading: IconButton(
+          onPressed: () {  
+            Navigator.pop(context,totalPrice);
+          }, 
+          icon: Icon(Icons.arrow_back), 
+        ),
         actions: <Widget>[
           IconButton(
             onPressed: () {}, 
@@ -142,19 +148,19 @@ class _DraftTicketState extends State<DraftTicket> {
       ),
 
         bottomNavigationBar: BottomAppBar(
-              height: 120,
-              child: Column(
+          height: 120,
+          child: Column(
+            children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Total', style: heading4Regular),
-                      Text('RM${totalPrice.toStringAsFixed(2)}', style: heading3Bold),
-                    ],
-                  ),
-                ),
+                  Text('Total', style: heading4Regular),
+                  Text('RM${totalPrice.toStringAsFixed(2)}', style: heading3Bold),
+                ],
+              ),
+            ),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -166,28 +172,6 @@ class _DraftTicketState extends State<DraftTicket> {
                           isShiftOpen = index == 0; // Toggle the shift state
                         });
 
-                    // Create transaction details map
-                   /*  final transactionDetails = {
-                      'dateTime': DateTime.now(),
-                      'cashReceived': 0.0,
-                      'totalPrice': totalPrice,
-                      'change': 0.0,
-                      
-                    };
- */
-                       // Create transaction details map
-                      /* final transactionDetails = {
-                        'dateTime': null,
-                        'cashReceived': 0.0,
-                        'totalPrice': totalPrice,
-                        'change' : 0.0,
-                        //'items': draftReceiptProvider.items,
-                        /* 'itemName': transaction.name,
-                        'itemQuantity': item.quantity,
-                        'itemPrice': item.price, 
-                        'itemTotalPrice': itemTotalPrice,  */
-                      };  */
-
                       final transactionDetails = Transaction(
                         dateTime: DateTime.now(), 
                         cashReceived: 0.00, 
@@ -196,9 +180,7 @@ class _DraftTicketState extends State<DraftTicket> {
                         list: draftReceiptProvider.items, 
                         isCashPayment: null,
                       );
-                    
-                        
-                          
+
                         // Navigate to respective pages based on index
                         if (index == 0) {
                           Navigator.push(

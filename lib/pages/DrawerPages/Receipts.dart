@@ -15,7 +15,7 @@ import 'package:pos_system/const/textStyle.dart';
 import 'package:pos_system/widgets/appDrawer.dart';
 
 class Receipts extends StatefulWidget {
-  const Receipts({super.key});
+  const Receipts({super.key,});
 
   @override
   State<Receipts> createState() => _ReceiptsState();
@@ -107,13 +107,7 @@ class _ReceiptsState extends State<Receipts> {
   Widget build(BuildContext context) {
     final transactionProvider = Provider.of<TransactionProvider>(context);
     final transactions = transactionProvider.transactions;
-
-    String getCurrentDateTime(){
-      final now = DateTime.now();
-      final formatter= DateFormat('HH:mm');
-      return formatter.format(now);
-    }
-
+    
     return Scaffold(
       resizeToAvoidBottomInset: false,
       onDrawerChanged: (isOpened) {
@@ -216,7 +210,7 @@ class _ReceiptsState extends State<Receipts> {
                         children: [
                           ListTile(
                             title: Text('RM${receipt.totalPrice.toStringAsFixed(2)}', style: heading4Regular),
-                            subtitle: Text(getCurrentDateTime(), style: bodySregular),                        
+                            subtitle: Text(DateFormat('HH:mm').format(receipt.dateTime), style: bodySregular),                        
                             trailing:  Text('Receipt no', style: bodySregular),                 
                             //Text('Change: RM${receipt['change'].toStringAsFixed(2)}', style: heading4Regular),
                             onTap: () {
